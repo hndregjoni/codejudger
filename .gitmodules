@@ -1,0 +1,3 @@
+[submodule "codejudger-team"]
+	path = codejudger-team
+	url = git@github.com:hndregjoni/codejudger-team.git
