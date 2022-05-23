@@ -66,7 +66,7 @@
           <v-btn
             color="primary"
             nuxt
-            to="/inspire"
+            @click="smth"
           >
             Continue
           </v-btn>
@@ -77,7 +77,14 @@
 </template>
 
 <script>
+
 export default {
-  name: 'IndexPage'
+  name: 'IndexPage',
+  
+  methods: {
+    async smth() {
+      this.$axios.get('hello');
+    }
+  }
 }
 </script>

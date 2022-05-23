@@ -1,4 +1,5 @@
 import colors from 'vuetify/es5/util/colors'
+import { extractFromEnv } from './env.ts';
 
 export default {
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
@@ -28,6 +29,7 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
+    './plugins/injectEnv.ts'
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -41,13 +43,32 @@ export default {
     '@nuxtjs/vuetify'
   ],
 
+  publicRuntimeConfig: {
+    ...extractFromEnv(process.env)
+  },
+
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
     // https://go.nuxtjs.dev/pwa
-    '@nuxtjs/pwa'
+    '@nuxtjs/pwa',
   ],
+
+  // Auth module configuration
+  auth: {
+    strategies: {
+      local: {
+        token: {
+          required: false,
+          type: false
+        },
+        endpoints: {
+          login: { url: '/api/auth/login', method: 'post' },
+        }
+      }
+    } 
+  },
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
