@@ -11,4 +11,4 @@ class Language(Base, TimestampedMixin):
 
     name = Column(String(length=80), unique=True)
 
-    supported_by = relationship("Judger", back_populates="languages_supported")
+    supported_by = relationship("Judger", secondary=judger_language, back_populates="languages_supported")

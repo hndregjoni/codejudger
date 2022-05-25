@@ -20,4 +20,4 @@ class Judger(Base, TimestampedMixin):
     host = Column(String(length=255))
     port = Column(Integer)
 
-    languages_supported = relationship("Judger", back_populates="supported_by")
+    languages_supported = relationship("Language", secondary=judger_language, back_populates="supported_by")

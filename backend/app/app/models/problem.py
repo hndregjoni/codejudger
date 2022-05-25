@@ -1,5 +1,5 @@
 from sqlalchemy import Column, ForeignKey, Integer, String, Boolean, Table
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 
 from app.db.base_class import Base
 from app.db.mixins import TimestampedMixin
@@ -20,9 +20,11 @@ class Problem(Base, TimestampedMixin):
     tags = relationship("Tag", secondary=problem_tags)
 
     # git
-    fork_of_id = Column(Integer)
-    fork_of = relationship("Problem", back_populates="forks")
-    forks = relationship("Problem", back_populates="fork_of")
+    fork_of_id = Column(Integer, ForeignKey("problem.id"))
+    # fork_of = relationship("Problem", remote_side=[id])
+    forks = relationship("Problem",
+                backref=backref('fork_of', remote_side=[id])
+            )
 
     soft_linked = Column(Boolean, default=False)
     head_commit = Column(String(length=40), index=True)
