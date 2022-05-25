@@ -2,7 +2,6 @@
 
 # ENV vars
 set -a
-cat /app/.env
 . /app/.env
 
 # Let the DB start

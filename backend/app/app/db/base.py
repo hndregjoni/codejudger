@@ -3,3 +3,6 @@
 from app.db.base_class import Base  # noqa
 from app.models.item import Item  # noqa
 from app.models.user import User  # noqa
+from app.models.problem import Problem
+from app.models.tag import Tag
+from app.models.attempt import ProblemAttempt
