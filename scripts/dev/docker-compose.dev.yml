@@ -17,3 +17,4 @@ services:
       - "5678:5678"
     volumes:
       - ./backend/app:/app
+      - ./scripts/dev/start-reload.sh:/start-reload.sh
