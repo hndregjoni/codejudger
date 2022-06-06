@@ -1,4 +1,5 @@
 from .item import Item
+from .role import UserRole
 from .user import User
 from .attempt import ProblemAttempt
 from .problem import Problem
