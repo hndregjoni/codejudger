@@ -1,68 +1,70 @@
 <template>
-  <v-app dark>
-    <v-navigation-drawer
-      v-model="drawer"
-      :mini-variant="miniVariant"
-      :clipped="clipped"
-      fixed
+  <v-app  light>
+    
+    <v-app-bar
       app
+      color="primary"
+      flat
     >
-      <v-list>
+      <v-container class="py-0 fill-height">
+        <v-avatar
+          class="mr-10"
+          color="info"
+          size="32"
+        >CJ</v-avatar>
+
+       <v-menu
+        v-for="text in links"
+        :key="text"
+        offset-y
+       >
+
+      <template v-slot:activator="{ attrs, on }"  >
+       
+
+          <v-btn 
+          text 
+          v-bind="attrs"
+          v-on="on">
+                  {{ text }}
+          </v-btn>
+   
+      </template>
+
+      <v-list  color="deep-purple lighten-5">
         <v-list-item
-          v-for="(item, i) in items"
-          :key="i"
-          :to="item.to"
-          router
-          exact
+           
+          v-for="item in items"
+          :key="item"
+          link
         >
-          <v-list-item-action>
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title v-text="item.title" />
-          </v-list-item-content>
+          <v-list-item-title v-text="item" class="black--text"></v-list-item-title>
         </v-list-item>
       </v-list>
-    </v-navigation-drawer>
-    <v-app-bar
-      :clipped-left="clipped"
-      fixed
-      app
-      elevation="0"
-    >
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-      <v-btn
-        icon
-        @click.stop="miniVariant = !miniVariant"
-      >
-        <v-icon>mdi-{{ `chevron-${miniVariant ? 'right' : 'left'}` }}</v-icon>
-      </v-btn>
-      <v-btn
-        icon
-        @click.stop="clipped = !clipped"
-      >
-        <v-icon>mdi-application</v-icon>
-      </v-btn>
-      <v-btn
-        icon
-        @click.stop="fixed = !fixed"
-      >
-        <v-icon>mdi-minus</v-icon>
-      </v-btn>
-      <v-toolbar-title v-text="title" />
-      <v-spacer />
-      <v-btn
-        icon
-        @click.stop="rightDrawer = !rightDrawer"
-      >
-        <v-icon>mdi-menu</v-icon>
-      </v-btn>
+    </v-menu>
+
+        <v-spacer></v-spacer>
+
+        <v-responsive max-width="260" >
+          <v-text-field 
+            dense
+            flat
+            hide-details
+            rounded
+            filled
+            class="white"
+            
+          ></v-text-field>
+        </v-responsive>
+      </v-container>
     </v-app-bar>
-    <v-main>
-      <v-container>
+
+    <v-main >
+      <v-container align-items: center fill-width>
         <Nuxt />
       </v-container>
     </v-main>
+
     <v-navigation-drawer
       v-model="rightDrawer"
       :right="right"
@@ -92,28 +94,18 @@
 <script>
 export default {
   name: 'DefaultLayout',
-  data () {
-    return {
-      clipped: false,
-      drawer: false,
-      fixed: false,
-      items: [
-        {
-          icon: 'mdi-apps',
-          title: 'Welcome',
-          to: '/'
-        },
-        {
-          icon: 'mdi-chart-bubble',
-          title: 'Inspire',
-          to: '/inspire'
-        }
+ 
+    data: () => ({
+      links: [
+        'Dashboard',
+        'Messages',
+        'Profile',
+        'Updates',
       ],
-      miniVariant: false,
-      right: true,
-      rightDrawer: false,
-      title: 'Vuetify.js'
-    }
-  }
+   
+      items: [...Array(4)].map((_, i) => `Item ${i}`),
+    }),
+ 
 }
 </script>
+

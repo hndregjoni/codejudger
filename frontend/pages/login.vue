@@ -1,4 +1,43 @@
 <template>
+
+<v-container fill-height fluid >
+  
+    
+  <v-row  justify="center" class="py-10" >
+
+    <v-row justify="center" class="pt-5 ">
+   <v-btn 
+      class="mx-2"
+      outlined
+      fab
+      color="black"
+    >
+      <v-icon>mdi-github</v-icon>
+    </v-btn>
+    <v-btn 
+      class="mx-2"
+      outlined
+      fab
+      color="red"
+    >
+      <v-icon>mdi-google</v-icon>
+    </v-btn>
+    <v-btn 
+      class="mx-2"
+      outlined
+      fab
+      color="blue"
+    >
+      <v-icon>mdi-facebook</v-icon>
+    </v-btn>
+    </v-row>
+  </v-row>
+  <v-row justify="center" >
+    <h3>or</h3>
+  </v-row>
+
+  <v-row  justify="center">
+     
   <v-form
     ref="form"
     v-model="valid"
@@ -8,56 +47,58 @@
       v-model="name"
       :counter="10"
       :rules="nameRules"
-      label="Name"
+      label="Username"
       required
     ></v-text-field>
 
     <v-text-field
       v-model="email"
+      :type="'password'"
       :rules="emailRules"
-      label="E-mail"
+      label="Password"
+    
       required
     ></v-text-field>
 
-    <v-select
-      v-model="select"
-      :items="items"
-      :rules="[v => !!v || 'Item is required']"
-      label="Item"
-      required
-    ></v-select>
 
-    <v-checkbox
-      v-model="checkbox"
-      :rules="[v => !!v || 'You must agree to continue!']"
-      label="Do you agree?"
-      required
-    ></v-checkbox>
-
-    <v-btn
-      :disabled="!valid"
-      color="success"
-      class="mr-4"
-      @click="validate"
-    >
-      Validate
+    <v-row class ="mt-5" >
+      <v-btn 
+        block
+        fill-width
+        class="ma-2 plr-3 "
+        outlined
+        text
+        color="secondary "   
+      >
+      <h3 color="black">
+         Log in 
+      </h3  >
+    
     </v-btn>
 
-    <v-btn
-      color="error"
-      class="mr-4"
-      @click="reset"
-    >
-      Reset Form
-    </v-btn>
+    </v-row>
+      <v-row >
+          <v-btn
+            block
+            class="ma-2"
+            outlined
+            text
+            color="black"
+          >
+          Sign in 
+        </v-btn>
+  </v-row>
+    
 
-    <v-btn
-      color="warning"
-      @click="resetValidation"
-    >
-      Reset Validation
-    </v-btn>
-  </v-form>    
+
+
+  </v-form>  
+
+  </v-row>
+ 
+</v-container>
+
+    
 </template>
 
 <script>
