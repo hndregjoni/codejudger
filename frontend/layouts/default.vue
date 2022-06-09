@@ -61,6 +61,7 @@
     </v-app-bar>
 
     <v-main >
+
       <v-container style="align-items: center" fill-width>
         <Nuxt />
       </v-container>
