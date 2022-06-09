@@ -12,8 +12,15 @@ if TYPE_CHECKING:
 user_roles = Table(
     "userroles",
     Base.metadata,
-    Column('user_id', ForeignKey("user.id"), primary_key=True, unique=True),
-    Column('role_id', ForeignKey("userrole.id"), unique=True, primary_key=True)
+    Column('user_id', ForeignKey("user.id"), primary_key=True),
+    Column('role_id', ForeignKey("userrole.id"), primary_key=True)
+)
+
+user_interests = Table(
+    "userinterests",
+    Base.metadata,
+    Column('user_id', ForeignKey("user.id"), primary_key=True),
+    Column('tag_id', ForeignKey("tag.id"), primary_key=True)
 )
 
 class User(Base, TimestampedMixin):
@@ -27,6 +34,7 @@ class User(Base, TimestampedMixin):
     items = relationship("Item", back_populates="owner")
 
     roles = relationship("UserRole", secondary=user_roles)
+    interests = relationship("Tag", secondary=user_interests)
 
     problems_authored = relationship("Problem", back_populates="author")
     attempts = relationship("ProblemAttempt", back_populates="user")

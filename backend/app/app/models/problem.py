@@ -7,8 +7,8 @@ from app.db.mixins import TimestampedMixin
 problem_tags = Table(
     "problemtags",
     Base.metadata,
-    Column('problem_id', ForeignKey("problem.id"), primary_key=True, unique=True),
-    Column('tag_id', ForeignKey("tag.id"), unique=True, primary_key=True)
+    Column('problem_id', ForeignKey("problem.id"), primary_key=True),
+    Column('tag_id', ForeignKey("tag.id"), primary_key=True)
 )
 
 class Problem(Base, TimestampedMixin):
