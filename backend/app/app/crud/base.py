@@ -2,7 +2,7 @@ from typing import Any, Dict, Generic, List, Optional, Type, TypeVar, Union
 
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, Query
 
 from app.db.base_class import Base
 
@@ -64,3 +64,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         db.delete(obj)
         db.commit()
         return obj
+    
+    @staticmethod
+    def paginate(query_in: Query, skip: int, limit: int) -> Query:
+        return query_in.offset(skip).limit(limit)

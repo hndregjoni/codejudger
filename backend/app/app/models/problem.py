@@ -34,3 +34,8 @@ class Problem(Base, TimestampedMixin):
     author = relationship("User", back_populates="problems_authored")
 
     attempts = relationship("ProblemAttempt", back_populates="problem")
+
+    # The contest it's attached to:
+
+    # The constraints:
+    # TODO: constraintset
