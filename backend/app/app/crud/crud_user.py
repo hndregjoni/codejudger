@@ -4,7 +4,8 @@ from sqlalchemy.orm import Session
 
 from app.core.security import get_password_hash, verify_password
 from app.crud.base import CRUDBase
-from app.models.user import User
+from app.models.user import User, user_roles
+from app.models.role import UserRole, UserRoles
 from app.schemas.user import UserCreate, UserUpdate
 
 
@@ -50,6 +51,26 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
 
     def is_superuser(self, user: User) -> bool:
         return user.is_superuser
+    
+    def assign_role(self, db: Session, user: User, role: UserRoles) -> bool:
+        """ Assing the roles, and return whether the assignment was effective """ 
+        if self.has_role(db, user, role):
+            print("Had role!")
+            return False
+        
+        role = db.query(UserRole).filter(UserRole.id == role.value).first()
+
+        user.roles.append(role)
+        db.commit()
+        return True
+
+
+    def has_role(self, db: Session, user: User, role: UserRoles) -> bool:
+        """
+        Does the user have the role ?
+        """ 
+
+        return any([u_role.id == role.value for u_role in user.roles])
 
 
 user = CRUDUser(User)

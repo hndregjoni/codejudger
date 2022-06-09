@@ -5,3 +5,4 @@ from .user import User, UserCreate, UserInDB, UserUpdate
 from .problem import Problem
 from .language import LanguageBase, LanguageCreate, LanguageUpdate, Language, LanguageShort
 from .tag import Tag, TagCreate, TagUpdate
+from .role import UserRole, UserRoleCreate

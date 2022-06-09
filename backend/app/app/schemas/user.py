@@ -1,6 +1,7 @@
-from typing import Optional, List
+from typing import Optional, List, Any
 
 from pydantic import BaseModel, EmailStr
+from pydantic.utils import GetterDict
 
 from .tag import Tag, extract_slug
 from .role import UserRole, extract_role_name
@@ -33,19 +34,24 @@ class UserInDBBase(UserBase):
         orm_mode = True
 
 
-UserInterests = List[Tag]
-UserRoles = List[UserRole]
-# Additional properties to return via API
+# Very very hacky!
+class UserGetter(GetterDict):
+    def get(self, key: str, default: Any) -> Any:
+        if key == "interests":
+            return [*map(extract_slug, self._obj.interests)]
+        
+        if key == "roles":
+            return [*map(extract_role_name, self._obj.roles)]
+        
+        return self._obj.__dict__[key]
+
 class User(UserInDBBase):
-    interests: UserInterests
-    roles: UserRoles
+    interests: List[str]
+    roles: List[str]
 
     class Config:
         orm_mode = True
-        json_encoders = {
-            UserInterests: lambda tag: extract_slug,
-            UserRoles: lambda role: extract_role_name
-        }
+        getter_dict = UserGetter
 
 
 # Additional properties stored in DB
