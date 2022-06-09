@@ -2,6 +2,8 @@ from typing import Optional
 
 from pydantic import BaseModel, constr
 
+extract_slug = lambda tag: tag.slug
+
 class TagBase(BaseModel):
     slug: constr(
         max_length=60,

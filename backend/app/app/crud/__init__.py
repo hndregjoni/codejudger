@@ -3,6 +3,7 @@ from .crud_user import user
 from .crud_problem import problem
 from .crud_language import language
 from .crud_tag import tag
+from .crud_role import role
 
 # For a new basic set of CRUD operations you could just do
 

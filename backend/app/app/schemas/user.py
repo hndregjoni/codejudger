@@ -1,6 +1,9 @@
-from typing import Optional
+from typing import Optional, List
 
 from pydantic import BaseModel, EmailStr
+
+from .tag import Tag, extract_slug
+from .role import UserRole, extract_role_name
 
 
 # Shared properties
@@ -20,6 +23,7 @@ class UserCreate(UserBase):
 # Properties to receive via API on update
 class UserUpdate(UserBase):
     password: Optional[str] = None
+    interests: Optional[str] = None
 
 
 class UserInDBBase(UserBase):
@@ -29,9 +33,19 @@ class UserInDBBase(UserBase):
         orm_mode = True
 
 
+UserInterests = List[Tag]
+UserRoles = List[UserRole]
 # Additional properties to return via API
 class User(UserInDBBase):
-    pass
+    interests: UserInterests
+    roles: UserRoles
+
+    class Config:
+        orm_mode = True
+        json_encoders = {
+            UserInterests: lambda tag: extract_slug,
+            UserRoles: lambda role: extract_role_name
+        }
 
 
 # Additional properties stored in DB
