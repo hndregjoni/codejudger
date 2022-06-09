@@ -5,6 +5,7 @@
       app
       color="primary"
       flat
+      
     >
       <v-container class="py-0 fill-height">
         <v-avatar
@@ -60,7 +61,7 @@
     </v-app-bar>
 
     <v-main >
-      <v-container align-items: center fill-width>
+      <v-container style="align-items: center" fill-width>
         <Nuxt />
       </v-container>
     </v-main>
