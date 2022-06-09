@@ -33,7 +33,7 @@ def create_tag(
     tag = crud.tag.get_with_slug(db, tag_in.slug)
 
     if tag:
-        raise HTTPException(status_code=400, detial="Tag with the given slug already exists")
+        raise HTTPException(status_code=400, detail="Tag with the given slug already exists")
     
     created_tag = crud.tag.create(db, obj_in=tag_in)
 
@@ -49,7 +49,7 @@ def get_tag_by_id(
     tag = crud.tag.get(db, id)
 
     if not tag:
-        raise HTTPException(status_code=400, detial="Tag with the given id doesn't exist")
+        raise HTTPException(status_code=400, detail="Tag with the given id doesn't exist")
     
     return tag
 
@@ -64,6 +64,6 @@ def get_tag_by_slug(
     tag = crud.tag.get_with_slug(db, slug)
 
     if not tag:
-        raise HTTPException(status_code=400, detial="Tag with the given slug doesn't exist")
+        raise HTTPException(status_code=400, detail="Tag with the given slug doesn't exist")
     
     return tag
