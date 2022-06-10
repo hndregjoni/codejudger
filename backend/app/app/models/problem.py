@@ -16,7 +16,10 @@ class Problem(Base, TimestampedMixin):
     slug = Column(String(length=60), index=True, unique=True)
 
     title = Column(String, index=True)
-    description = Column(String)
+    
+    # Set a lmit to 20k characters for a problem description
+    description = Column(String(20000))
+
     tags = relationship("Tag", secondary=problem_tags)
 
     # git
@@ -39,3 +42,6 @@ class Problem(Base, TimestampedMixin):
 
     # The constraints:
     # TODO: constraintset
+
+    # Test case count:
+    test_case_count = Column(Integer)

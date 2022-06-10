@@ -1,3 +1,4 @@
+from http.client import HTTPException
 from typing import Any, List
 
 from fastapi import APIRouter, Depends
@@ -6,7 +7,13 @@ from sqlalchemy.orm import Session
 
 
 from app import crud, models, schemas
+
+# from app.models.problem import Problem
+# from app.schemas.problem import ProblemCreate, ProblemUpdate
+# from app.schemas.problem import Problem as ProblemSchema
+
 from app.api import deps
+from app.exceptions.tag import TagNotExistsError
 
 router = APIRouter()
 
@@ -27,10 +34,16 @@ def get_problems(
 def create_problem(
     *,
     db: Session = Depends(deps.get_db),
+    problem_in: schemas.ProblemCreate,
     current_user: models.User = Depends(deps.get_current_active_user)
 ) -> Any:
     """ Creating a problem """
-    pass
+
+    try:
+        item = crud.problem.create_problem(db, obj_in=problem_in, author_id=current_user.id)
+        return item
+    except TagNotExistsError as e:
+        raise HTTPException(status_code=400, detail=f"The tag {e.tag} does not exist!")
 
 
 @router.get("/id/{id}")
