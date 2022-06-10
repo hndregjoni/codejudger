@@ -54,7 +54,12 @@ def get_problem_by_id(
     current_user: models.User = Depends(deps.get_current_active_user)
 ) -> Any:
     """ Get a problem by id. """
-    pass
+    problem = crud.problem.get(db, id=id)
+
+    if not problem:
+        raise HTTPException(status_code=404, detail=f"Problem not found")
+    
+    return problem
 
 
 @router.get("/slug/{slug}")
@@ -65,7 +70,12 @@ def get_problem_by_slug(
     current_user: models.User = Depends(deps.get_current_active_user)
 ) -> Any:
     """ Get a problem by slug """
-    pass
+    problem = crud.problem.get_with_slug(db, slug=slug)
+
+    if not problem:
+        raise HTTPException(status_code=404, detail=f"Problem not found")
+    
+    return problem
 
 
 

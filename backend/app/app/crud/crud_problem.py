@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
@@ -53,5 +53,8 @@ class CRUDProblem(CRUDBase[Problem, ProblemCreate, ProblemUpdate]):
             , skip=skip, limit=limit
         ).all()
 
+    def get_with_slug(self, db: Session, slug: str) -> Optional[Problem]:
+        """ Get an tag by its slug """
+        return self.get_with_filter(db, self.model.slug == slug)
 
 problem = CRUDProblem(Problem)
