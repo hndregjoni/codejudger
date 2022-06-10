@@ -5,5 +5,5 @@ class TagNotExistsError(Exception):
     tag: Union[int, str]
 
     def __init__(self, tag: Union[int, str]):
-        super.__init__(f"Tag {tag} not found")
+        super().__init__(f"Tag {tag} not found")
         self.tag = tag
