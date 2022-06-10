@@ -21,16 +21,14 @@
       <v-form ref="form" v-model="valid" lazy-validation>
         <v-text-field
           v-model="name"
-          :counter="10"
           :rules="nameRules"
           label="Username"
           required
         ></v-text-field>
 
         <v-text-field
-          v-model="email"
+          v-model="password"
           :type="'password'"
-          :rules="emailRules"
           label="Password"
           required
         ></v-text-field>
@@ -43,6 +41,7 @@
             outlined
             text
             color="secondary "
+            @click="login()"
           >
             <h3 color="black">Log in</h3>
           </v-btn>
@@ -59,18 +58,15 @@
 
 <script>
 export default {
+  auth: false,
+
   data: () => ({
     valid: true,
     name: "",
     nameRules: [
       (v) => !!v || "Name is required",
-      (v) => (v && v.length <= 10) || "Name must be less than 10 characters",
     ],
-    email: "",
-    emailRules: [
-      (v) => !!v || "E-mail is required",
-      (v) => /.+@.+\..+/.test(v) || "E-mail must be valid",
-    ],
+    password: "",
     select: null,
     items: ["Item 1", "Item 2", "Item 3", "Item 4"],
     checkbox: false,
@@ -86,6 +82,24 @@ export default {
     resetValidation() {
       this.$refs.form.resetValidation();
     },
+    async login() {
+      try {
+        let formdata = new FormData();
+        formdata.append("username", this.name);
+        formdata.append("password", this.password);
+
+        let response = await this.$auth.loginWith(
+          'local',{
+            data: formdata
+          });
+        
+        await this.$auth.setUserToken(response.data.access_token)
+        
+        this.$router.push('/problems');
+      } catch (err) {
+        // Show error here!
+      }
+    }
   },
 };
 </script>

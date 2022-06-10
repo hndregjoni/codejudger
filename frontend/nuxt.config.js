@@ -23,6 +23,11 @@ export default {
     ]
   },
 
+  // Router:
+  router: {
+    middleware: ['auth']
+  },
+
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
   ],
@@ -50,6 +55,7 @@ export default {
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
+    '@nuxtjs/auth-next',
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
     // https://go.nuxtjs.dev/pwa
@@ -61,11 +67,29 @@ export default {
     strategies: {
       local: {
         token: {
-          required: false,
-          type: false
+          required: true,
+          global: true,
+          property: 'access_token',
+          type: 'Bearer'
         },
+
+        storage: {
+          prefix: "auth."
+        },
+
+        user: {
+          property: false
+        },
+
         endpoints: {
-          login: { url: '/api/auth/login', method: 'post' },
+          login: {
+            url: '/auth/login',
+            method: 'post',
+            headers: {
+              "Content-Type": "multipart/form-data",
+            }
+          },
+          user: { url: '/users/me', method: 'get' } 
         }
       }
     } 
