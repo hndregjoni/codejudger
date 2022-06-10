@@ -15,7 +15,7 @@ class Problem(Base, TimestampedMixin):
     id = Column(Integer, primary_key=True, index=True)
     slug = Column(String(length=60), index=True, unique=True)
 
-    title = Column(String, index=True)
+    title = Column(String(length=180), index=True)
     
     # Set a lmit to 20k characters for a problem description
     description = Column(String(20000))
@@ -31,6 +31,7 @@ class Problem(Base, TimestampedMixin):
 
     soft_linked = Column(Boolean, default=False)
     head_commit = Column(String(length=40), index=True)
+    is_forkable = Column(Boolean, default=True)
 
     # Problem author
     author_id = Column(Integer, ForeignKey("user.id"))
@@ -38,10 +39,14 @@ class Problem(Base, TimestampedMixin):
 
     attempts = relationship("ProblemAttempt", back_populates="problem")
 
+    difficulty = Column(Integer)
+
     # The contest it's attached to:
 
+
     # The constraints:
-    # TODO: constraintset
+    constraintset_id = Column(Integer, ForeignKey("constraintset.id"))
+    constraintset = relationship("ConstraintSet")
 
     # Test case count:
     test_case_count = Column(Integer)

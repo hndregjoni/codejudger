@@ -1,4 +1,4 @@
-from sqlalchemy import Column,String
+from sqlalchemy import Column, String, Integer, ForeignKey
 from sqlalchemy.orm import deferred, relationship
 
 from app.db.base_class import Base
@@ -14,3 +14,6 @@ class Language(Base, TimestampedMixin):
     placeholder = deferred(Column(String(2000)))
 
     supported_by = relationship("Judger", secondary=judger_language, back_populates="languages_supported")
+
+    spacetime_constraint_id = Column(Integer, ForeignKey("spacetimeconstraint.id"))
+    spacetime_constraint = relationship("SpacetimeConstraint")
