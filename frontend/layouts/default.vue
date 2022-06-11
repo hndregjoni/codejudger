@@ -4,9 +4,7 @@
    <Navbar/>
 
     <v-main >
-      <v-container  style="align-items: center" fill-width>
-        <Nuxt />
-      </v-container>
+      <Nuxt />
     </v-main>
 
     <v-navigation-drawer v-model="rightDrawer" :right="right" temporary fixed>

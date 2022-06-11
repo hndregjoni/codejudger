@@ -1,25 +1,25 @@
 <template>
-<v-row  justify="center" class="py-7">
-  <v-card style="width:50%" >
-    <v-card-title>
-      Problems
-      <v-spacer></v-spacer>
-      <v-text-field
-        v-model="search"
-        append-icon="mdi-magnify"
-        label="Search"
-        single-line
-        hide-details
-      ></v-text-field>
-    </v-card-title>
-    <v-data-table 
-      class="mytab"
-      :headers="headers"
-      :items="problems"
-      :search="search"
-    ></v-data-table>
-  </v-card>
-  </v-row>
+  <v-container fluid class="pa-6">
+    <v-card fill-width>
+      <v-card-title>
+        Problems
+        <v-spacer></v-spacer>
+        <v-text-field
+          v-model="search"
+          append-icon="mdi-magnify"
+          label="Search"
+          single-line
+          hide-details
+        ></v-text-field>
+      </v-card-title>
+      <v-data-table 
+        class="mytab"
+        :headers="headers"
+        :items="problems"
+        :search="search"
+      ></v-data-table>
+    </v-card>
+  </v-container>
 </template>
 
 <style>

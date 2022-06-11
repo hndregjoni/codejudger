@@ -53,7 +53,7 @@ export default {
       links: [
         { name: "Home", url: "/" },
         { name: "Problems", url: "/problems" },
-        { name: "Contest", url: "/conetsts" }
+        { name: "Contests", url: "/contests" }
       ],
     };
   },
