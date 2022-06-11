@@ -13,6 +13,6 @@ from .constraints import (
     LanguageConstraint, 
     SpaceTimeConstraint,
     TimespanConstraint,
-    UserConstraint,
+    UserConstraint, UserConstraintType,
     ConstraintSet,
 )

@@ -1,7 +1,8 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, Boolean, Table
+from sqlalchemy import Column, ForeignKey, Integer, String, Boolean, Table, Enum
 from sqlalchemy.orm import relationship
 
 from app.db.base_class import Base
+from .user import UserConstraintType
 
 class ConstraintSet(Base):
     id = Column(Integer, primary_key=True)
@@ -14,5 +15,7 @@ class ConstraintSet(Base):
 
     language_constraints = relationship("LanguageConstraint", backref="cset")
     user_constraints = relationship("UserConstraint", backref="cset")
+
+    user_constraint_type = Column(Enum(UserConstraintType), nullable=True)
 
     # TODO: team constraint when teams make it in
