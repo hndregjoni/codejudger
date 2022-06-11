@@ -19,7 +19,7 @@ export default {
       { name: 'format-detection', content: 'telephone=no' }
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
     ]
   },
 
@@ -35,7 +35,8 @@ export default {
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
     './plugins/injectEnv.ts',
-    './plugins/codeMirror.js'
+    './plugins/codeMirror.js',
+    './plugins/markdown.js'
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -141,6 +142,6 @@ export default {
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
-    extractCSS: true
+    // extractCSS: true
   }
 }
