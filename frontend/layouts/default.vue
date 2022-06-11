@@ -1,5 +1,5 @@
 <template>
-  <v-app dark>
+  <v-app light>
     
    <Navbar/>
 
@@ -35,19 +35,10 @@
     </v-footer>
   </v-app>
 </template>
-<style >
-.theme--dark.v-application {
-  background-color: var(--v-background-base) !important;
-}
-.theme--light.v-application {
-  background-color: var(--v-background-base) !important;
-}
-</style>
 
 <script>
 export default {
   name: 'DefaultLayout',
-  components:true
 }
 </script>
 
