@@ -7,7 +7,7 @@ class UserConstraint(Base):
     id = Column(Integer, primary_key=True)
 
     cset_id = Column(Integer, ForeignKey("constraintset.id", use_alter=True))
-    cset = relationship("ConstraintSet", back_populates="user_constraints")
+    # cset = relationship("ConstraintSet", back_populates="user_constraints")
 
     user_id = Column(Integer, ForeignKey("user.id"))
     user = relationship("User", backref="constrained_to")

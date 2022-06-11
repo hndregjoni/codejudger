@@ -16,4 +16,4 @@ class Language(Base, TimestampedMixin):
     supported_by = relationship("Judger", secondary=judger_language, back_populates="languages_supported")
 
     spacetime_constraint_id = Column(Integer, ForeignKey("spacetimeconstraint.id"))
-    spacetime_constraint = relationship("SpacetimeConstraint")
+    spacetime_constraint = relationship("SpaceTimeConstraint", foreign_keys=[spacetime_constraint_id])

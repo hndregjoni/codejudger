@@ -42,11 +42,12 @@ class Problem(Base, TimestampedMixin):
     difficulty = Column(Integer)
 
     # The contest it's attached to:
-
+    contest_id = Column(Integer, ForeignKey('contest.id'))
+    contest = relationship("Contest", back_populates="problems")
 
     # The constraints:
     constraintset_id = Column(Integer, ForeignKey("constraintset.id"))
-    constraintset = relationship("ConstraintSet")
+    constraintset = relationship("ConstraintSet", backref="constrained_problems")
 
     # Test case count:
     test_case_count = Column(Integer)
