@@ -84,6 +84,8 @@ class Settings(BaseSettings):
 
     class Config:
         case_sensitive = True
+    
+    PROBLEMS_DIR: str = "/opt/problems"
 
 
 settings = Settings()

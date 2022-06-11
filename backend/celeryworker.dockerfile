@@ -26,4 +26,6 @@ COPY ./app/worker-start.sh /worker-start.sh
 
 RUN chmod +x /worker-start.sh
 
+RUN mkdir -p /opt/problems
+
 CMD ["bash", "/worker-start.sh"]

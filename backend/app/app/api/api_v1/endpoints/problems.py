@@ -13,6 +13,7 @@ from app import crud, models, schemas
 
 from app.api import deps
 from app.exceptions.tag import TagNotExistsError
+from app.core.problem_manager import ProblemManager
 
 router = APIRouter()
 
@@ -23,7 +24,8 @@ def get_problems(
     skip: int = 0,
     limit: int = 10,
     db: Session = Depends(deps.get_db),
-    current_user: models.User = Depends(deps.get_current_active_user)
+    current_user: models.User = Depends(deps.get_current_active_user),
+    problem_manager: ProblemManager = Depends(deps.get_problem_manager)
 ) -> Any:
     """Get problems"""
     return crud.problem.get_problems_for_user(db, user_id=current_user.id, skip=skip, limit=limit)

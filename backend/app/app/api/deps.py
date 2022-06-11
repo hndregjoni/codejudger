@@ -10,6 +10,7 @@ from app import crud, models, schemas
 from app.core import security
 from app.core.config import settings
 from app.db.session import SessionLocal
+from app.core.problem_manager import ProblemManager
 
 reusable_oauth2 = OAuth2PasswordBearer(
     tokenUrl=f"{settings.API_V1_STR}/auth/login"
@@ -59,3 +60,7 @@ def get_current_active_superuser(
             status_code=400, detail="The user doesn't have enough privileges"
         )
     return current_user
+
+
+def get_problem_manager() -> ProblemManager:
+    return ProblemManager(settings.PROBLEMS_DIR)

@@ -1,11 +1,14 @@
 from typing import Optional, List, Tuple, Union, Set,  Any
 
+from dataclasses import dataclass
+
 from pydantic import BaseModel, validator
 from pydantic.utils import GetterDict
 
 from .tag import extract_slug
 
-class TestCase(BaseModel):
+@dataclass
+class TestCase:
     q: str
     a: str
     w: float
