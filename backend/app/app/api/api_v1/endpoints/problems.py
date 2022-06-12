@@ -24,8 +24,7 @@ def get_problems(
     skip: int = 0,
     limit: int = 10,
     db: Session = Depends(deps.get_db),
-    current_user: models.User = Depends(deps.get_current_active_user),
-    problem_manager: ProblemManager = Depends(deps.get_problem_manager)
+    current_user: models.User = Depends(deps.get_current_active_user)
 ) -> Any:
     """Get problems"""
     return crud.problem.get_problems_for_user(db, user_id=current_user.id, skip=skip, limit=limit)
@@ -36,12 +35,13 @@ def create_problem(
     *,
     db: Session = Depends(deps.get_db),
     problem_in: schemas.ProblemCreate,
-    current_user: models.User = Depends(deps.get_current_active_user)
+    current_user: models.User = Depends(deps.get_current_active_user),
+    pm: ProblemManager = Depends(deps.get_problem_manager)
 ) -> Any:
     """ Creating a problem """
 
     try:
-        item = crud.problem.create_problem(db, obj_in=problem_in, author_id=current_user.id)
+        item = crud.problem.create_problem(db, pm, obj_in=problem_in, author=current_user)
         return item
     except TagNotExistsError as e:
         raise HTTPException(status_code=400, detail=f"The tag {e.tag} does not exist!")

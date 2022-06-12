@@ -9,6 +9,7 @@ from .role import UserRole, extract_role_name
 
 # Shared properties
 class UserBase(BaseModel):
+    username: str
     email: Optional[EmailStr] = None
     is_active: Optional[bool] = True
     is_superuser: bool = False

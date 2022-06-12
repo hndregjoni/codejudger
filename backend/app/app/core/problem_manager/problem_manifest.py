@@ -1,32 +1,30 @@
-from typing import List
+from typing import List, Optional
 
 from dataclasses import dataclass
 from pydantic import BaseModel
 from pydantic_yaml import YamlModelMixin
 
-from app.schemas.problem import TestCase
+from app import schemas
 
 @dataclass
 class ProblemDescription:
-    file: str
-    text: str
+    file: Optional[str]
+    text: Optional[str]
 
-class ProblemTestCase(TestCase):
+class ProblemTestCase(schemas.TestCase):
     pass
 
 @dataclass
 class ProblemTest:
     cases: List[ProblemTestCase]
 
-@dataclass
-class ProblemConstraints:
-    time: int
-    space: int
+class SpaceTimeConstraint(YamlModelMixin, schemas.SpaceTimeConstraint):
+    pass
 
 class ProblemManifest(YamlModelMixin, BaseModel):
     version: float
 
     description: ProblemDescription
-    constraints: ProblemConstraints
+    constraints: List[SpaceTimeConstraint] = []
 
     test: ProblemTest

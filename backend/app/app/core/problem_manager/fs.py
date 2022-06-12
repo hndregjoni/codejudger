@@ -71,16 +71,22 @@ class ProblemFSManager:
     def read_manifest(self, problem_slug: str) -> ProblemManifest:
         """ Reads the manifest from the problem directory """
 
-        mpath = self._path(problem_slug, "manifest.yml")
+        mpath = self._path(problem_slug, "problem.yml")
 
         ProblemManifest.parse_file(mpath)
 
     def write_manifest(self, problem_slug: str, manifest: ProblemManifest):
         """ Writes the given manifest. Overrides the one present. """        
-        mpath = self._path(problem_slug, "manifest.yml")
+        mpath = self._path(problem_slug, "problem.yml")
 
         with open(mpath, "w") as f:
             dump(manifest, f)
+    
+    def write_readme(self, problem_slug: str, description: str) -> None:
+        rpath = self._path(problem_slug, "README.md")
+
+        with open(rpath, "w") as f:
+            f.write(description)
     
     def compress_problem(self, problem_slug: str, hash: str, format: str = "gztar", out_file: Optional[str] = None) -> str:
         """ Compress the given problem.

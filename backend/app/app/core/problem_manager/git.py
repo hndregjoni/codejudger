@@ -2,6 +2,7 @@ from typing import Optional
 
 import git
 from git.repo.base import Repo
+from git.objects.commit import Commit
 
 from git import Repo
 
@@ -42,28 +43,29 @@ class ProblemGitManager:
         p = self.problem_manager.fs._path(problem_slug)
         return git.Repo(p).git_dir
 
-    def get_head_commit(self, problem_slug: str = None, repo: Repo = None) -> str:
+    def get_head_commit(self, problem_slug: str = None, repo: Repo = None, commit: Commit = None) -> str:
         """ Returns a commit hash of the HEAD of the repository. """
         repo = repo or self.git_repo(problem_slug)
+        head_commit = commit or repo.head.commit
 
-        hexsha = repo.head.commit.hexsha
+        hexsha = head_commit.hexsha
         short_sha = repo.git.rev_parse(hexsha, short=6)
 
         return short_sha
     
-    def initialize_repo(self, problem_slug: str) -> Repo:
+    def initialize_repo(self, problem_slug: str = None) -> Repo:
         """ Initialize a given problem with a repository """
         p = self.problem_manager.fs._path(problem_slug)
         return git.Repo.init(p)
 
-    def commit_changes(self, problem_slug: str) -> str:
+    def commit_changes(self, author_name: str, problem_slug: str = None, repo: Repo = None) -> str:
         """ Commit the changes of the conventional files and returns the new hash """ 
         repo = repo or self.git_repo(problem_slug)
 
-        repo.add(self.SOUGHT_FILES)
-        repo.commit()
+        repo.index.add(self.SOUGHT_FILES)
+        c = repo.index.commit(f"Authored:{author_name}")
 
-        return self.get_head_commit(repo=repo)
+        return self.get_head_commit(repo=repo, commit=c)
 
     def git_clone(self, problem_slug_in: str, problem_slug_out: str):
         """ Clone the given problem_slug_in into the problem_slug_out """
