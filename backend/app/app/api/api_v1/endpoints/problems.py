@@ -68,7 +68,6 @@ def get_problem_by_slug(
     *,
     db: Session = Depends(deps.get_db),
     slug: str,
-    current_user: models.User = Depends(deps.get_current_active_user)
 ) -> Any:
     """ Get a problem by slug """
     problem = crud.problem.get_with_slug(db, slug=slug)
@@ -78,6 +77,68 @@ def get_problem_by_slug(
     
     return problem
 
+
+# Problem statement
+
+@router.get("/slug/{id}/statement", response_model=schemas.ProblemStatement)
+def get_statement_by_id(
+    *,
+    db: Session = Depends(deps.get_db),
+    id: int
+) -> Any:
+    """ Get the statement of a problem by its id """
+    problem = crud.problem.get(db, id=id)
+
+    if not problem:
+        raise HTTPException(status_code=404, detail=f"Problem not found")
+
+    return schemas.ProblemStatement(statement=problem.description)
+
+@router.get("/slug/{slug}/statement", response_model=schemas.ProblemStatement)
+def get_statement_by_slug(
+    *,
+    db: Session = Depends(deps.get_db),
+    slug: str
+) -> Any:
+    """ Get the statement of a problem by its slug """
+    problem = crud.problem.get_with_slug(db, slug=slug)
+
+    if not problem:
+        raise HTTPException(status_code=404, detail=f"Problem not found")
+
+    return schemas.ProblemStatement(statement=problem.description)
+
+
+# Testcases:
+
+@router.get("/id/{id}/cases")
+def get_testcases_by_id(
+    *,
+    db: Session = Depends(deps.get_db),
+    id: int
+) -> Any:
+    """ Get the statement of a problem by its id """
+    problem = crud.problem.get(db, id=id)
+
+    if not problem:
+        raise HTTPException(status_code=404, detail=f"Problem not found")
+    
+    pass
+
+
+@router.get("/slug/{slug}/cases")
+def get_testcases_by_slug(
+    *,
+    db: Session = Depends(deps.get_db),
+    slug: str
+) -> Any:
+    """ Get the statement of a problem by its slug """
+    problem = crud.problem.get_with_slug(db, slug=slug)
+
+    if not problem:
+        raise HTTPException(status_code=404, detail=f"Problem not found")
+
+    pass
 
 
 # Submissions:
@@ -101,26 +162,4 @@ def get_submissions_by_slug(
     current_user: models.User = Depends(deps.get_current_active_user)
 ) -> Any:
     """ Attempt a problem by id """
-    pass
-
-
-@router.post("/id/{id}/subs")
-def attempt_submission_by_id(
-    *,
-    db: Session = Depends(deps.get_db),
-    id: int, 
-    current_user: models.User = Depends(deps.get_current_active_user)
-) -> Any:
-    """ Attempt a problem by id """
-    pass
-
-
-@router.post("/slug/{slug}/subs")
-def attempt_submission_by_slug(
-    *,
-    db: Session = Depends(deps.get_db),
-    slug: str, 
-    current_user: models.User = Depends(deps.get_current_active_user)
-) -> Any:
-    """ Attempt a problem by slug """
     pass

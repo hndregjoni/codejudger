@@ -54,6 +54,9 @@ class ProblemCreate(BaseModel):
     constraints: Optional[ProblemConstraints]
     tags: Optional[Union[List[str], List[int]]]
 
+class ProblemStatement(BaseModel):
+    statement: str
+
 class ProblemUpdate(BaseModel):
     pass
 

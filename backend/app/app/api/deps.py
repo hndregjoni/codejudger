@@ -63,4 +63,4 @@ def get_current_active_superuser(
 
 
 def get_problem_manager() -> ProblemManager:
-    return ProblemManager(settings.PROBLEMS_DIR)
+    return ProblemManager(settings.PROBLEMS_DIR, settings.PROBLEMS_CACHE)
