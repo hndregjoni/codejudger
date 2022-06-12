@@ -1,6 +1,7 @@
 from typing import Optional, List, Union
 
 from sqlalchemy.orm import Session
+from fastapi.encoders import jsonable_encoder
 
 from app.crud.base import CRUDBase
 from app.models.tag import Tag
@@ -51,5 +52,13 @@ class CRUDTag(CRUDBase[TagSchema, TagCreate, TagUpdate]):
     def get_with_slug(self, db: Session, slug: str) -> Optional[Tag]:
         """ Get an tag by its slug """
         return self.get_with_filter(db, self.model.slug == slug)
+    
+    def create_tag(self, db: Session, *, obj_in: TagCreate, author_id: int) -> Tag:
+        obj_in_data = jsonable_encoder(obj_in)
+        db_obj = Tag(**obj_in_data, author_id=author_id)  # type: ignore
+        db.add(db_obj)
+        db.commit()
+        db.refresh(db_obj)
+        return db_obj
 
 tag = CRUDTag(Tag)

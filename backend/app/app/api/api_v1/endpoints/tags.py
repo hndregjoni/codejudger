@@ -35,7 +35,11 @@ def create_tag(
     if tag:
         raise HTTPException(status_code=400, detail="Tag with the given slug already exists")
     
-    created_tag = crud.tag.create(db, obj_in=tag_in)
+    created_tag = crud.tag.create_tag(
+        db,
+        obj_in=tag_in,
+        author_id=current_user.id
+    )
 
     return created_tag
 
