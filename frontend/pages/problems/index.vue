@@ -44,11 +44,10 @@ export default {
           sortable: false,
           value: 'name',
         },
-        { text: 'Difficulty lvl.', value: 'difficulty' },
-        { difficultyLvl: '' },
+        { text: 'Difficulty lvl.', value: 'difficulty' ,sortable: false},
         { text: 'Date posted', value: 'date', dataType: "Date" },
-        { text: 'Status', value: 'status' },
-        { text: 'Tags', value: 'tag' },
+        { text: 'Status', value: 'status' ,sortable: false },
+        { text: 'Tags', value: 'tag',sortable: false },
       ],
       problems: [
         {
