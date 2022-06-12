@@ -78,8 +78,6 @@ class Settings(BaseSettings):
         )
 
     EMAIL_TEST_USER: EmailStr = "test@example.com"  # type: ignore
-    FIRST_SUPERUSER: EmailStr
-    FIRST_SUPERUSER_PASSWORD: str
     USERS_OPEN_REGISTRATION: bool = False
 
     class Config:
@@ -87,6 +85,23 @@ class Settings(BaseSettings):
     
     PROBLEMS_DIR: str = "/opt/problems"
     PROBLEMS_CACHE: str = "/opt/problems_cache"
+    
+    FIRST_SUPERUSER_USERNAME: str
+    FIRST_SUPERUSER_EMAIL: EmailStr
+    FIRST_SUPERUSER_PASSWORD: str
+
+    MAX_CASES: int = 100
+
+    # time limits
+    MIN_TIME: int = 200
+    MAX_TIME: int = 20000
+
+    # space limits
+    MIN_SPACE: int = 512 # 512 kb
+    MAX_SPACE: int = 1024*10 # 10 mb
+
+    # max constraints of spacetime type
+    MAX_SPACETIME_CONSTRAINTS = 10
 
 
 settings = Settings()

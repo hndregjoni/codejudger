@@ -25,6 +25,7 @@ user_interests = Table(
 
 class User(Base, TimestampedMixin):
     id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, unique=True, index=True)
     full_name = Column(String, index=True)
     email = Column(String, unique=True, index=True, nullable=False)
     hashed_password = Column(String, nullable=False)
