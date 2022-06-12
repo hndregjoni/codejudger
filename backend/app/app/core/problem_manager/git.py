@@ -10,16 +10,20 @@ class ProblemGitManager:
     A composite item of a :class:`.manager.ProblemManager`
 
     Attributes:
-        problem_dir     The directory storing all the problems.
-        problem_manager A reference to the containing problem manager
+        problems_dir:        The directory storing all the problems
+        problem_cache_dir:  The problem cache directory
+        problem_manager:    A reference to the containing problem manager
     """
-    problem_dir: str
+    problems_dir: str
+    problems_cache_dir: str
     problem_manager: 'manager.ProblemManager'
 
     SOUGHT_FILES=['problem.yml', 'README.md']
 
-    def __init__(self, problem_dir: str, problem_manager: 'manager.ProblemManager'):
-        self.problem_dir = problem_dir
+    def __init__(self, problems_dir: str, problems_cache_dir: str, problem_manager: 'manager.ProblemManager'):
+        self.problems_dir = problems_dir
+        self.problems_cache_dir = problems_cache_dir
+        
         self.problem_manager = problem_manager
     
     def check_repo(self, problem_slug: str) -> bool:
@@ -52,7 +56,7 @@ class ProblemGitManager:
         p = self.problem_manager.fs._path(problem_slug)
         return git.Repo.init(p)
 
-    def commit_changes(self, problem_slug: str) -> bool:
+    def commit_changes(self, problem_slug: str) -> str:
         """ Commit the changes of the conventional files and returns the new hash """ 
         repo = repo or self.git_repo(problem_slug)
 

@@ -86,6 +86,7 @@ class Settings(BaseSettings):
         case_sensitive = True
     
     PROBLEMS_DIR: str = "/opt/problems"
+    PROBLEMS_CACHE: str = "/opt/problems_cache"
 
 
 settings = Settings()

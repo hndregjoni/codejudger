@@ -9,21 +9,29 @@ from os.path import (
     islink
 )
 
-from os import mkdir,listdir
+from os import mkdir,listdir,rename
+import shutil
 
 from .problem_manifest import ProblemManifest
 
 class ProblemFSManager:
-    problem_dir: str
+    problems_dir: str
     problem_manager: 'manager.ProblemManager'
 
-    def __init__(self, problem_dir: str, problem_manager: 'manager.ProblemManager'):
-        self.problem_dir = problem_dir
+    def __init__(self, problems_dir: str, problems_cache_dir: str, problem_manager: 'manager.ProblemManager'):
+        self.problems_dir = problems_dir
+        self.problems_cache_dir = problems_cache_dir
+
         self.problem_manager = problem_manager
 
 
-    def _path(self, *p: List[str]):
-        return join(self.dir, *p)
+    def _path(self, *p: List[str]) -> str:
+        """ A path joining utility """
+        return join(self.problems_dir, *p)
+    
+    def _path_c(self, *p: List[str]) -> str:
+        """ A path joining utility for the cache"""
+        return join(self.problems_cache_dir, *p)
  
     def check_exists(self, problem_slug: str) -> bool:
         """ Checks whether directory exists """
@@ -73,5 +81,24 @@ class ProblemFSManager:
 
         with open(mpath, "w") as f:
             dump(manifest, f)
+    
+    def compress_problem(self, problem_slug: str, hash: str, format: str = "gztar", out_file: Optional[str] = None) -> str:
+        """ Compress the given problem.
+        
+        Args:
+            problem_slug:    The slug id of the problem
+            format:          The archiving format, as per :func:`shutil.make_archive`
+            out_file:        The archive without the format, as per :func:`shutil.make_archive`. 
+              If None, one will be created in the problems cache directory, containing the hash in the name.
+
+        """
+        p = self._path(problem_slug)
+        o = out_file or self._path_c(f"{problem_slug}_{hash}")
+
+        if not exists(o):
+            name = shutil.make_archive(out_file, o)
+            rename(name, o)
+
+        return o
 
 from . import manager
