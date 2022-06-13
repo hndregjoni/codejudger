@@ -1,6 +1,6 @@
 <template>
   <v-container fluid class="pa-6">
-    <v-row>
+    <v-row class="justify-space-around">
       <v-col justify="center">
         <v-card fill-width>
           <v-card-title>
@@ -22,10 +22,24 @@
           ></v-data-table>
         </v-card>
       </v-col>
-      <v-col >
-        <v-row  justify="end">
+      <v-col cols="auto">
+        <v-card class="pa-2 mb-4">
+          <v-btn 
+            block
+            outlined
+            text
+            color="black"
+            class="primary"
+            to="/problems/create"
+            nuxt
+          >
+            Create problem
+          </v-btn>
+        </v-card>
+        <v-card>
+
           <v-date-picker v-model="picker"></v-date-picker>
-        </v-row>
+        </v-card>
       </v-col>
     </v-row>
   </v-container>
