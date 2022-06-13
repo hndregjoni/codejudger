@@ -1,7 +1,8 @@
-from typing import Any, Dict, Generic, List, Optional, Type, TypeVar, Union
+from typing import Any, Dict, Generic, List, Optional, Type, TypeVar, Union, Callable
 
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
+from sqlalchemy import not_
 from sqlalchemy.orm import Session, Query
 
 from app.db.base_class import Base
@@ -11,7 +12,13 @@ CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
 UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
 
 
+not_disabled_func = lambda m: \
+    lambda q: q.filter(not_(m.disabled))
+
 class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
+    model: Type[ModelType]
+    default_filter: Optional[Callable[[Query], Query]]
+
     def __init__(self, model: Type[ModelType]):
         """
         CRUD object with default methods to Create, Read, Update, Delete (CRUD).
@@ -22,12 +29,32 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         * `schema`: A Pydantic model (schema) class
         """
         self.model = model
+        self.default_filter = None
 
-    def get(self, db: Session, id: Any) -> Optional[ModelType]:
-        return db.query(self.model).filter(self.model.id == id).first()
+    def _with_filter(self, fltr: Callable[[Query], Query]) -> None:
+        """ This chains filters """
+        self.default_filter = fltr if not self.default_filter \
+            else lambda q: fltr(self.default_filter(q))
+
+    def _base_query(self, db: Session, apply_default: bool) -> Query:
+        """ Returns a base query, that takes the default_filter into consideration """
+        query = db.query(self.model)
+
+        if apply_default and self.default_filter:
+            query = self.default_filter(query)
+        
+        return query
+
+
+    def get(self, db: Session, id: Any, apply_default=True) -> Optional[ModelType]:
+        query = self._base_query(db, apply_default)
+
+        return query.filter(self.model.id == id).first()
     
-    def get_with_filter(self, db: Session, *criterion: Any) -> Optional[ModelType]:
-        return db.query(self.model).filter(*criterion).first()
+    def get_with_filter(self, db: Session, *criterion: Any, apply_default=True) -> Optional[ModelType]:
+        query = self._base_query(db, apply_default)
+
+        return query.filter(*criterion).first()
 
     def get_multi(
         self, db: Session, *, skip: int = 0, limit: int = 100
