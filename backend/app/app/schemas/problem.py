@@ -74,7 +74,6 @@ class ProblemCreate(BaseModel):
     tags: Optional[Union[List[str], List[int]]]
 
     listed: bool
-    disabled: bool
     frozen: bool
 
 class ProblemStatement(BaseModel):

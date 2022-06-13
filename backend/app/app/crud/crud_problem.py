@@ -1,12 +1,14 @@
+from operator import not_
 from typing import List, Optional
 
 from fastapi.encoders import jsonable_encoder
+from sqlalchemy import not_
 from sqlalchemy.orm import Session
 
-from app import schemas
-from app.crud.base import CRUDBase
-from app.crud import crud_tag
+from app import schemas, crud
+from app.crud.base import CRUDBase, not_disabled_func
 from app.models import User
+from app.models.role import UserRoles
 from app.models.problem import Problem
 from app.schemas.problem import ProblemCreate, ProblemUpdate
 import app.core.problem_manager as problem_manager
@@ -30,7 +32,7 @@ class CRUDProblem(CRUDBase[Problem, ProblemCreate, ProblemUpdate]):
             author_id=author.id
         )
 
-        tags = crud_tag.tag.get_multi_poly(db, obj_in.tags)
+        tags = crud.tag.get_multi_poly(db, obj_in.tags)
         db_problem.tags.extend(tags)
 
         # A way to determine the timespace constraints, for the given problem:
@@ -67,10 +69,23 @@ class CRUDProblem(CRUDBase[Problem, ProblemCreate, ProblemUpdate]):
         db.refresh(db_problem)
 
         return db_problem
+    
+    def can_access(self, user: Optional[User], problem: Optional[Problem]):
+        """ Can a user access a problem ?"""
+        # If no user, then whether not disabled:
+        if not user:
+            return not problem.disabled
 
+        # If admin, then yes
+        if crud.user.has_role(None, user, UserRoles.Admin):
+            return True
+        
+        # Either user is author, or the problem is not disabled
+        return problem.author_id == user.id or \
+            not problem.disabled
 
     def get_problems_for_user(
-        self, db: Session, *, user_id: int, skip: int = 0, limit: int = 10
+        self, db: Session, *, user_id: int, skip: int = 0, limit: int = 10, listed: bool = True
     ) -> List[Problem]:
         """ Get the problems accessible by a user.
 
@@ -82,11 +97,18 @@ class CRUDProblem(CRUDBase[Problem, ProblemCreate, ProblemUpdate]):
         """
 
         # For now, return all visible problems:
-        return self.paginate(
-            db.query(self.model)
 
-            , skip=skip, limit=limit
+        query = self._base_query(db, True) \
+            .filter(not_(Problem.disabled)) \
+            .filter(Problem.listed == listed)
+
+        paginated = self.paginate(
+            query,
+            skip=skip, limit=limit
         ).all()
+
+        return paginated
+
 
     def get_with_slug(self, db: Session, slug: str) -> Optional[Problem]:
         """ Get an tag by its slug """

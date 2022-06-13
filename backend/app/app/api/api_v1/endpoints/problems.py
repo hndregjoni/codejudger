@@ -1,4 +1,4 @@
-from typing import Any, List
+from typing import Any, List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import Response
@@ -17,6 +17,15 @@ from app.exceptions.tag import TagNotExistsError
 from app.core.problem_manager import ProblemManager
 
 router = APIRouter()
+
+def problem_hoops(problem: Optional[models.Problem], user: Optional[models.User]):
+    if not problem:
+        raise HTTPException(status_code=404, detail=f"Problem not found")
+    
+    if not crud.problem.can_access(user, problem):
+        raise HTTPException(status_code=400, detail="User cannot acces the problem")
+    
+    return problem
 
 # Problems:
 @router.get("/", response_model=List[schemas.Problem])
@@ -58,9 +67,8 @@ def get_problem_by_id(
     """ Get a problem by id. """
     problem = crud.problem.get(db, id=id)
 
-    if not problem:
-        raise HTTPException(status_code=404, detail=f"Problem not found")
-    
+    problem = problem_hoops(problem, current_user)
+
     return problem
 
 
@@ -73,8 +81,7 @@ def get_problem_by_slug(
     """ Get a problem by slug """
     problem = crud.problem.get_with_slug(db, slug=slug)
 
-    if not problem:
-        raise HTTPException(status_code=404, detail=f"Problem not found")
+    problem = problem_hoops(problem, None)
     
     return problem
 
@@ -90,8 +97,7 @@ def get_statement_by_id(
     """ Get the statement of a problem by its id """
     problem = crud.problem.get(db, id=id)
 
-    if not problem:
-        raise HTTPException(status_code=404, detail=f"Problem not found")
+    problem = problem_hoops(problem, None)
 
     return schemas.ProblemStatement(statement=problem.description)
 
@@ -104,8 +110,7 @@ def get_statement_by_slug(
     """ Get the statement of a problem by its slug """
     problem = crud.problem.get_with_slug(db, slug=slug)
 
-    if not problem:
-        raise HTTPException(status_code=404, detail=f"Problem not found")
+    problem = problem_hoops(problem, None)
 
     return schemas.ProblemStatement(statement=problem.description)
 
@@ -129,8 +134,7 @@ def get_manifest_by_id(
     """ Get problem manifest file by id """
     problem = crud.problem.get(db, id=id)
 
-    if not problem:
-        raise HTTPException(status_code=404, detail=f"Problem not found")
+    problem = problem_hoops(problem, None)
 
     return Response(pm.fs.read_manifest_raw(problem.slug), media_type="text/yaml")
 
@@ -147,8 +151,7 @@ def get_manifest_by_slug(
     """ Get problem manifest file by slug """
     problem = crud.problem.get_with_slug(db, slug=slug)
 
-    if not problem:
-        raise HTTPException(status_code=404, detail=f"Problem not found")
+    problem = problem_hoops(problem)
 
     return Response(pm.fs.read_manifest_raw(slug), media_type="text/yaml")
 
@@ -163,8 +166,7 @@ def get_statement_by_slug(
     """ Get the statement of a problem by its slug """
     problem = crud.problem.get_with_slug(db, slug=slug)
 
-    if not problem:
-        raise HTTPException(status_code=404, detail=f"Problem not found")
+    problem = problem_hoops(problem, None)
 
     return schemas.ProblemStatement(statement=problem.description)
 
@@ -181,8 +183,7 @@ def get_testcases_by_id(
     """ Get the statement of a problem by its id """
     problem = crud.problem.get(db, id=id)
 
-    if not problem:
-        raise HTTPException(status_code=404, detail=f"Problem not found")
+    problem = problem_hoops(problem, None)
     
     pass
 
@@ -196,8 +197,7 @@ def get_testcases_by_slug(
     """ Get the statement of a problem by its slug """
     problem = crud.problem.get_with_slug(db, slug=slug)
 
-    if not problem:
-        raise HTTPException(status_code=404, detail=f"Problem not found")
+    problem = problem_hoops(problem, None)
 
     pass
 
