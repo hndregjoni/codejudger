@@ -33,6 +33,15 @@ class Problem(Base, TimestampedMixin):
     head_commit = Column(String(length=40), index=True)
     is_forkable = Column(Boolean, default=True)
 
+    # General properties:
+    # Problem appears in public lists:
+    listed = Column(Boolean, default=True)
+    # Problem is accessable
+    disabled = Column(Boolean, default=False)
+    # Problem is interactable
+    frozen = Column(Boolean, default=False)
+
+
     # Problem author
     author_id = Column(Integer, ForeignKey("user.id"))
     author = relationship("User", back_populates="problems_authored")

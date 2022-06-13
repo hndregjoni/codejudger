@@ -42,8 +42,13 @@ class ProblemBase(BaseModel):
     # TODO: Fork
     soft_linked: bool
     head_commit: Optional[str]
+    is_forkable: bool
 
     author_id = int
+
+    listed: bool
+    disabled: bool
+    frozen: bool
 
 
 class ProblemCreate(BaseModel): 
@@ -67,6 +72,10 @@ class ProblemCreate(BaseModel):
 
     constraints: Optional[ProblemConstraints]
     tags: Optional[Union[List[str], List[int]]]
+
+    listed: bool
+    disabled: bool
+    frozen: bool
 
 class ProblemStatement(BaseModel):
     statement: str
