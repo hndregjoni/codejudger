@@ -90,6 +90,8 @@ class Settings(BaseSettings):
     FIRST_SUPERUSER_EMAIL: EmailStr
     FIRST_SUPERUSER_PASSWORD: str
 
+    USERNAME_REGEX="[a-zA-Z0-9_]+"
+
     MAX_CASES: int = 100
 
     # time limits

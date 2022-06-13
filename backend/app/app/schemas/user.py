@@ -1,15 +1,17 @@
 from typing import Optional, List, Any
 
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 from pydantic.utils import GetterDict
 
 from .tag import Tag, extract_slug
 from .role import UserRole, extract_role_name
+from app.core.config import settings
 
 
 # Shared properties
 class UserBase(BaseModel):
-    username: str
+    username: str = Field(..., regex=settings.USERNAME_REGEX)
+
     email: Optional[EmailStr] = None
     is_active: Optional[bool] = True
     is_superuser: bool = False
