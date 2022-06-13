@@ -23,63 +23,21 @@
         </v-col>
         <v-col></v-col>
         <v-col cols="auto">
-          
-          <v-btn text @click="show=!show">
-            <v-icon v-show="show">mdi-white-balance-sunny</v-icon>
-
-            <v-icon v-show="!show">mdi-moon-waxing-crescent</v-icon>
-
-          </v-btn>
-          <v-btn text>
-            <v-icon>mdi-bell</v-icon>
-          </v-btn>
-
-          
-          </v-col>
-        <v-col cols="auto">
           <div class="text-center">
-            <v-menu v-model="menu" :close-on-content-click="false" offset-y>
-              <template v-slot:activator="{ on, attrs }">
-               
-          <v-btn fab dense small text v-bind="attrs"
-                  v-on="on"  size="32">
-            <v-icon size="32px">mdi-account-circle</v-icon>
-          </v-btn>
-                
-              </template>
+            <v-btn fab dense small text @click="toggleMode">
+              <v-icon v-show="this.$vuetify.theme.dark"
+                >mdi-white-balance-sunny</v-icon
+              >
 
-              <v-card dense flat>
-                <v-list>
-                  <v-list-item class="mx-4">
-                    <v-list-item-avatar color="primary">
-                      IMG
-                    </v-list-item-avatar>
-                  </v-list-item>
+              <v-icon v-show="!this.$vuetify.theme.dark"
+                >mdi-moon-waxing-crescent</v-icon
+              >
+            </v-btn>
+            <v-btn fab dense small text>
+              <v-icon>mdi-bell</v-icon>
+            </v-btn>
 
-                  <v-list-item>
-                    <v-card-title>Username</v-card-title>
-                  </v-list-item>
-                </v-list>
-
-                <v-divider></v-divider>
-
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-list dense class="width=auto">
-                    <v-list-item>
-                      <v-list-item-action>
-                        <v-btn text color="primary">Profile settings</v-btn>
-                      </v-list-item-action>
-                    </v-list-item>
-                    <v-list-item>
-                      <v-list-item-action>
-                        <v-btn text color="primary">Logout</v-btn>
-                      </v-list-item-action>
-                    </v-list-item>
-                  </v-list>
-                </v-card-actions>
-              </v-card>
-            </v-menu>
+            <profile-menu/>
           </div>
         </v-col>
       </v-row>
@@ -103,10 +61,15 @@
 
 <script>
 export default {
+  methods: {
+    toggleMode() {
+      this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
+    },
+  },
   data() {
     return {
-      show:true,
-     
+      menu: false,
+
       links: [
         { name: "Home", url: "/" },
         { name: "Problems", url: "/problems" },
