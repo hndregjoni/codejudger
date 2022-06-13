@@ -1,4 +1,4 @@
-from typing import Optional, List, Callable, Any
+from typing import Optional, List, Callable, Any, TextIO
 
 from yaml import dump
 
@@ -106,5 +106,12 @@ class ProblemFSManager:
             rename(name, o)
 
         return o
+    
+    def read_manifest_raw(self, problem_slug: str) -> TextIO:
+        """ Read the manifest file directly from disk """
+        mpath = self._path(problem_slug, "problem.yml")
+
+        with open(mpath) as f:
+            return f.read()
 
 from . import manager
