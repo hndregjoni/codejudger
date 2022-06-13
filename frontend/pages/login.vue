@@ -47,8 +47,8 @@
           </v-btn>
         </v-row>
         <v-row>
-          <v-btn block class="ma-2" outlined text color="black">
-            Sign in
+          <v-btn block class="ma-2" outlined text color="black" to="/signup" nuxt>
+            Sign Up
           </v-btn>
         </v-row>
       </v-form>

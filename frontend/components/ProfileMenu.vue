@@ -42,8 +42,11 @@
         style="flex-direction: column"
         justify="center"
       >
-        <div style="width: 100%">
+        <div style="width: 100%" class="mb-2">
           <v-btn outlined block color="primary" @click="login">Login</v-btn>
+        </div>
+        <div style="width: 100%">
+          <v-btn outlined block color="primary" @click="signup">Sign Up</v-btn>
         </div>
       </v-card-actions>
     </v-card>
@@ -71,9 +74,14 @@ export default {
         await this.$router.push("/login");
     },
 
+    async signup() {
+        this.menu = false;
+        await this.$router.push("/signup");
+    },
+
     async logout() {
-      await this.$auth.logout();
       this.menu = false;
+      await this.$auth.logout();
       await this.$router.push("/");
     },
   },

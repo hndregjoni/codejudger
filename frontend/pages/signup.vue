@@ -156,6 +156,8 @@
 
 <script>
 export default {
+  auth: false,
+
   data() {
     return {
       value1: true,
@@ -179,9 +181,3 @@ export default {
   },
 };
 </script> 
-<!-- 
-<style scoped>
-
-
-</style> -->
-

@@ -76,6 +76,12 @@
             Here we edit the language constraints
           </v-expansion-panel-content>
         </v-expansion-panel>
+        <v-expansion-panel>
+          <v-expansion-panel-header>Timespan constraint</v-expansion-panel-header>
+          <v-expansion-panel-content>
+            Here we edit the timespan constraints
+          </v-expansion-panel-content>
+        </v-expansion-panel>
       </v-expansion-panels>
     </v-row>
 
