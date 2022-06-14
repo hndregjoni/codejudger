@@ -16,7 +16,7 @@ class SpaceTimeConstraint(Base):
     id = Column(Integer, primary_key=True)
 
     cset_id = Column(Integer, ForeignKey("constraintset.id", use_alter=True), nullable=True)
-    cset = relationship("ConstraintSet", back_populates="spacetime_constraints", foreign_keys=[cset_id], uselist=False)
+    # cset = relationship("ConstraintSet", back_populates="spacetime_constraints", foreign_keys=[cset_id], uselist=False)
 
     # Time in milliseconds
     time = Column(Integer, nullable=True)

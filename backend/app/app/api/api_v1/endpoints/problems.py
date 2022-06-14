@@ -50,6 +50,11 @@ def create_problem(
 ) -> Any:
     """ Creating a problem """
 
+    problem = crud.problem.get_with_slug(db, slug=problem_in.slug)
+
+    if problem:
+        raise HTTPException(status_code=400, detail=f"Problem with the same slug exists!")
+
     try:
         item = crud.problem.create_problem(db, pm, obj_in=problem_in, author=current_user)
         return item
@@ -76,12 +81,13 @@ def get_problem_by_id(
 def get_problem_by_slug(
     *,
     db: Session = Depends(deps.get_db),
+    current_user: models.User = Depends(deps.get_current_active_user),
     slug: str,
 ) -> Any:
     """ Get a problem by slug """
     problem = crud.problem.get_with_slug(db, slug=slug)
 
-    problem = problem_hoops(problem, None)
+    problem = problem_hoops(problem, current_user)
     
     return problem
 
@@ -92,12 +98,13 @@ def get_problem_by_slug(
 def get_statement_by_id(
     *,
     db: Session = Depends(deps.get_db),
+    current_user: models.User = Depends(deps.get_current_active_user),
     id: int
 ) -> Any:
     """ Get the statement of a problem by its id """
     problem = crud.problem.get(db, id=id)
 
-    problem = problem_hoops(problem, None)
+    problem = problem_hoops(problem, current_user)
 
     return schemas.ProblemStatement(statement=problem.description)
 
@@ -105,12 +112,13 @@ def get_statement_by_id(
 def get_statement_by_slug(
     *,
     db: Session = Depends(deps.get_db),
+    current_user: models.User = Depends(deps.get_current_active_user),
     slug: str
 ) -> Any:
     """ Get the statement of a problem by its slug """
     problem = crud.problem.get_with_slug(db, slug=slug)
 
-    problem = problem_hoops(problem, None)
+    problem = problem_hoops(problem, current_user)
 
     return schemas.ProblemStatement(statement=problem.description)
 
@@ -138,7 +146,6 @@ def get_manifest_by_id(
 
     return Response(pm.fs.read_manifest_raw(problem.slug), media_type="text/yaml")
 
-# Manifest.yml
 @router.get(
     "/slug/{slug}/problem.yml",
     responses={**manifest_response})
@@ -151,55 +158,45 @@ def get_manifest_by_slug(
     """ Get problem manifest file by slug """
     problem = crud.problem.get_with_slug(db, slug=slug)
 
-    problem = problem_hoops(problem)
+    problem = problem_hoops(problem, None)
 
     return Response(pm.fs.read_manifest_raw(slug), media_type="text/yaml")
 
 
-# Manifest.yml
-@router.get("/slug/{slug}/problem.yml", response_model=schemas.ProblemStatement)
-def get_statement_by_slug(
-    *,
-    db: Session = Depends(deps.get_db),
-    slug: str
-) -> Any:
-    """ Get the statement of a problem by its slug """
-    problem = crud.problem.get_with_slug(db, slug=slug)
-
-    problem = problem_hoops(problem, None)
-
-    return schemas.ProblemStatement(statement=problem.description)
-
-
-
 # Testcases:
 
-@router.get("/id/{id}/cases")
+@router.get("/id/{id}/cases", response_model=List[schemas.TestCase])
 def get_testcases_by_id(
     *,
     db: Session = Depends(deps.get_db),
+    pm: ProblemManager = Depends(deps.get_problem_manager),
+    current_user: models.User = Depends(deps.get_current_active_user),
     id: int
 ) -> Any:
     """ Get the statement of a problem by its id """
     problem = crud.problem.get(db, id=id)
 
-    problem = problem_hoops(problem, None)
-    
-    pass
+    problem = problem_hoops(problem, current_user)
+
+    manifest = pm.fs.read_manifest(problem.slug)
+    return manifest.test.cases
 
 
-@router.get("/slug/{slug}/cases")
+@router.get("/slug/{slug}/cases", response_model=List[schemas.TestCase])
 def get_testcases_by_slug(
     *,
     db: Session = Depends(deps.get_db),
+    pm: ProblemManager = Depends(deps.get_problem_manager),
+    current_user: models.User = Depends(deps.get_current_active_user),
     slug: str
 ) -> Any:
     """ Get the statement of a problem by its slug """
     problem = crud.problem.get_with_slug(db, slug=slug)
 
-    problem = problem_hoops(problem, None)
+    problem = problem_hoops(problem, current_user)
 
-    pass
+    manifest = pm.fs.read_manifest(problem.slug)
+    return manifest.test.cases
 
 
 # Submissions:

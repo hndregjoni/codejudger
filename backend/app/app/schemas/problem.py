@@ -4,12 +4,13 @@ from dataclasses import dataclass
 
 from pydantic import BaseModel, validator, Field
 from pydantic.utils import GetterDict
+from pydantic.dataclasses import dataclass
 
 from .tag import extract_slug
 from app.core.config import settings
 
-@dataclass
-class TestCase:
+
+class TestCase(BaseModel):
     q: str
     a: str
     w: float

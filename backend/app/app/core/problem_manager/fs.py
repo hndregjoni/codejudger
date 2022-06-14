@@ -1,6 +1,7 @@
+from asyncore import read
 from typing import Optional, List, Callable, Any, TextIO
 
-from yaml import dump
+import yaml
 
 from os.path import (
     exists,
@@ -12,7 +13,7 @@ from os.path import (
 from os import mkdir,listdir,rename
 import shutil
 
-from .problem_manifest import ProblemManifest
+from .problem_manifest import ProblemManifest, dump_yaml, read_yaml
 
 class ProblemFSManager:
     problems_dir: str
@@ -73,14 +74,15 @@ class ProblemFSManager:
 
         mpath = self._path(problem_slug, "problem.yml")
 
-        ProblemManifest.parse_file(mpath)
+        with open(mpath) as f:
+            return read_yaml(f.read())
 
     def write_manifest(self, problem_slug: str, manifest: ProblemManifest):
         """ Writes the given manifest. Overrides the one present. """        
         mpath = self._path(problem_slug, "problem.yml")
 
         with open(mpath, "w") as f:
-            dump(manifest, f)
+            dump_yaml(manifest, f)
     
     def write_readme(self, problem_slug: str, description: str) -> None:
         rpath = self._path(problem_slug, "README.md")

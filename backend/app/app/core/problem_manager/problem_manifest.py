@@ -1,30 +1,54 @@
 from typing import List, Optional
 
-from dataclasses import dataclass
+from collections import OrderedDict
+
 from pydantic import BaseModel
-from pydantic_yaml import YamlModelMixin
+
+import yaml
 
 from app import schemas
 
-@dataclass
-class ProblemDescription:
+class ProblemDescription(BaseModel):
     file: Optional[str]
     text: Optional[str]
 
 class ProblemTestCase(schemas.TestCase):
     pass
 
-@dataclass
-class ProblemTest:
+class ProblemTest(BaseModel):
     cases: List[ProblemTestCase]
 
-class SpaceTimeConstraint(YamlModelMixin, schemas.SpaceTimeConstraint):
+class SpaceTimeConstraint(schemas.SpaceTimeConstraint):
     pass
 
-class ProblemManifest(YamlModelMixin, BaseModel):
+class ProblemManifest(BaseModel):
     version: float
 
     description: ProblemDescription
     constraints: List[SpaceTimeConstraint] = []
 
     test: ProblemTest
+
+def dump_yaml(manifest: ProblemManifest, f):
+    """ Build a yaml manually"""
+    obj = OrderedDict()
+
+    obj['version'] = manifest.version
+    obj['description'] = {
+        'file': manifest.description.file,
+        'text': manifest.description.text
+    }
+
+    obj['constraints'] = [c.dict() for c in manifest.constraints]
+
+    obj['test'] = {
+        'cases': [case.dict() for case in manifest.test.cases]
+    }
+
+    yaml.dump(obj, f)
+
+
+def read_yaml(input: str) -> ProblemManifest:
+    """ Decode the YAML """
+    a = yaml.safe_load(input)
+    return ProblemManifest(**a)
