@@ -15,17 +15,28 @@ from app import crud, models, schemas
 from app.api import deps
 from app.exceptions.tag import TagNotExistsError
 from app.core.problem_manager import ProblemManager
+from app.exceptions.http.problem import ProblemNotFoundError
 
 router = APIRouter()
 
-def problem_hoops(problem: Optional[models.Problem], user: Optional[models.User]):
+# Util
+def problem_hoops(
+    problem: Optional[models.Problem],
+    user: Optional[models.User],
+    slug: Optional[str] = None,
+    id: Optional[int] = None
+):
     if not problem:
-        raise HTTPException(status_code=404, detail=f"Problem not found")
+        raise ProblemNotFoundError(slug=slug, id=id)
+        # raise HTTPException(status_code=404, detail=f"Problem not found")
     
     if not crud.problem.can_access(user, problem):
         raise HTTPException(status_code=400, detail="User cannot acces the problem")
     
     return problem
+
+responses = {**ProblemNotFoundError.responses()}
+
 
 # Problems:
 @router.get("/", response_model=List[schemas.Problem])
@@ -62,7 +73,7 @@ def create_problem(
         raise HTTPException(status_code=400, detail=f"The tag {e.tag} does not exist!")
 
 
-@router.get("/id/{id}")
+@router.get("/id/{id}", responses=responses)
 def get_problem_by_id(
     *,
     db: Session = Depends(deps.get_db),
@@ -72,7 +83,7 @@ def get_problem_by_id(
     """ Get a problem by id. """
     problem = crud.problem.get(db, id=id)
 
-    problem = problem_hoops(problem, current_user)
+    problem = problem_hoops(problem, current_user, id=id)
 
     return problem
 
@@ -87,7 +98,7 @@ def get_problem_by_slug(
     """ Get a problem by slug """
     problem = crud.problem.get_with_slug(db, slug=slug)
 
-    problem = problem_hoops(problem, current_user)
+    problem = problem_hoops(problem, current_user, slug=slug)
     
     return problem
 
@@ -104,7 +115,7 @@ def get_statement_by_id(
     """ Get the statement of a problem by its id """
     problem = crud.problem.get(db, id=id)
 
-    problem = problem_hoops(problem, current_user)
+    problem = problem_hoops(problem, current_user, id=id)
 
     return schemas.ProblemStatement(statement=problem.description)
 
@@ -118,7 +129,7 @@ def get_statement_by_slug(
     """ Get the statement of a problem by its slug """
     problem = crud.problem.get_with_slug(db, slug=slug)
 
-    problem = problem_hoops(problem, current_user)
+    problem = problem_hoops(problem, current_user, slug=slug)
 
     return schemas.ProblemStatement(statement=problem.description)
 
@@ -142,7 +153,7 @@ def get_manifest_by_id(
     """ Get problem manifest file by id """
     problem = crud.problem.get(db, id=id)
 
-    problem = problem_hoops(problem, None)
+    problem = problem_hoops(problem, None, id=id)
 
     return Response(pm.fs.read_manifest_raw(problem.slug), media_type="text/yaml")
 
@@ -158,7 +169,7 @@ def get_manifest_by_slug(
     """ Get problem manifest file by slug """
     problem = crud.problem.get_with_slug(db, slug=slug)
 
-    problem = problem_hoops(problem, None)
+    problem = problem_hoops(problem, None, slug=slug)
 
     return Response(pm.fs.read_manifest_raw(slug), media_type="text/yaml")
 
@@ -176,7 +187,7 @@ def get_testcases_by_id(
     """ Get the statement of a problem by its id """
     problem = crud.problem.get(db, id=id)
 
-    problem = problem_hoops(problem, current_user)
+    problem = problem_hoops(problem, current_user, id=id)
 
     manifest = pm.fs.read_manifest(problem.slug)
     return manifest.test.cases
@@ -193,7 +204,7 @@ def get_testcases_by_slug(
     """ Get the statement of a problem by its slug """
     problem = crud.problem.get_with_slug(db, slug=slug)
 
-    problem = problem_hoops(problem, current_user)
+    problem = problem_hoops(problem, current_user, slug=slug)
 
     manifest = pm.fs.read_manifest(problem.slug)
     return manifest.test.cases
