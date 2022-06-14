@@ -11,16 +11,15 @@
                         </v-text-field>
                     </v-card-title>
                     <v-row>
-                        <v-select style="width:29%" class="pa-2 ml-3 " :items="['Active', 'Finished']" label="Status"
+                        <v-select style="width:20%" class="pa-2 ml-7 " :items="['Active', 'Finished']" label="Status"
                             v-model="search">
                         </v-select>
-                        <v-select style="width:29%" class="pa-2 mr-3" label="Tags"
+                        <v-select style="width:20%" class="pa-2 mr-3" label="Tags"
                             :items="['Python', 'Java', 'Go', 'Clojure']" v-model="search"></v-select>
                         <v-row class="ml-100">
-                            <v-col cols="6" sm="3">
+                            <v-col cols="6" sm="5">
                                 <v-menu ref="menu" v-model="menu" :close-on-content-click="false"
-                                    :return-value.sync="date" transition="scale-transition" offset-y max-width="200px"
-                                    min-width="auto">
+                                    :return-value.sync="date">
                                     <template v-slot:activator="{ on, attrs }">
                                         <v-text-field v-model="date" label="Starts in:" prepend-icon="mdi-calendar"
                                             readonly v-bind="attrs" v-on="on"></v-text-field>
@@ -36,11 +35,10 @@
                                     </v-date-picker>
                                 </v-menu>
                             </v-col>
-                            <v-spacer></v-spacer>
-                            <v-col cols="6" sm="3">
+
+                            <v-col cols="6" sm="5">
                                 <v-menu ref="menu" v-model="menu" :close-on-content-click="false"
-                                    :return-value.sync="date" transition="scale-transition" offset-y max-width="200px"
-                                    min-width="auto" class="pr-3">
+                                    :return-value.sync="date">
                                     <template v-slot:activator="{ on, attrs }">
                                         <v-text-field v-model="date" label="Ends in:" prepend-icon="mdi-calendar"
                                             readonly v-bind="attrs" v-on="on"></v-text-field>
