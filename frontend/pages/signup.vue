@@ -28,6 +28,13 @@
         ></v-text-field>
 
         <v-text-field
+          v-model="email"
+          :type="'email'"
+          label="Email"
+          required
+        ></v-text-field>
+
+        <v-text-field
           v-model="password"
           :type="'password'"
           :rules="passwordRules"
@@ -79,22 +86,6 @@
           required
         ></v-select>
 
-        <v-text-field
-          v-model="name"
-          :rules="nameRules"
-          label="Nationality"
-          required
-        ></v-text-field>
-
-        <v-select
-          placeholder="0"
-          class="pa-0"
-          v-model="occupation"
-          :items="['Student', 'Working', 'None']"
-          label="Occupation"
-          required
-        ></v-select>
-
         <v-label>Bio</v-label>
 
         <v-textarea counter="90" solo></v-textarea>
@@ -123,13 +114,6 @@
             </v-chip>
           </template>
         </v-combobox>
-
-        <v-text-field
-          v-model="email"
-          :type="'email'"
-          label="Email"
-          required
-        ></v-text-field>
 
         <v-row class="mt-5">
           <input
