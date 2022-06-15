@@ -1,5 +1,6 @@
 from operator import not_
 from typing import List, Optional
+from datetime import datetime
 
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy import not_
@@ -10,8 +11,10 @@ from app.crud.base import CRUDBase, not_disabled_func
 from app.models import User
 from app.models.role import UserRoles
 from app.models.problem import Problem
-from app.schemas.problem import ProblemCreate, ProblemUpdate
+from app.schemas.problem import ProblemCreate, ProblemUpdate, TestCase
 import app.core.problem_manager as problem_manager
+from app.core.problem_manager.problem_manifest import ProblemManifest
+from app.core.problem_manager.manager import ProblemManager
 
 class CRUDProblem(CRUDBase[Problem, ProblemCreate, ProblemUpdate]):
     def create_problem(
@@ -70,7 +73,41 @@ class CRUDProblem(CRUDBase[Problem, ProblemCreate, ProblemUpdate]):
 
         return db_problem
     
-    def can_access(self, user: Optional[User], problem: Optional[Problem]):
+    def can_be_attempted(
+        self,
+        db: Optional[Session],
+        problem: Problem,
+        moment: datetime = datetime.now()
+    ) -> bool:
+        """ Can a problem be solved right now, regardless of user? """
+        pass
+    
+    def can_attempt(
+        self,
+        db: Session,
+        user: User,
+        problem: Problem,
+        moment: datetime = datetime.now()
+    ) -> bool:
+        """ Can a user attempt a specific problem ? (Not disallowed by the constraintset) """
+        return True
+    
+    def get_cases(
+        self,
+        db: Session, pm: ProblemManager,
+        problem: Problem,
+        manifest: ProblemManifest,
+        filtered: bool = True
+    ) -> List[TestCase]:
+        manifest = pm.fs.read_manifest(problem.slug)
+        
+        cases = manifest.test.cases
+        if filtered:
+            cases = [case for case in cases if case.v]
+        
+        return cases
+    
+    def can_access(self, user: Optional[User], problem: Optional[Problem]) -> bool:
         """ Can a user access a problem ?"""
         # If no user, then whether not disabled:
         if not user:

@@ -190,7 +190,13 @@ def get_testcases_by_id(
     problem = problem_hoops(problem, current_user, id=id)
 
     manifest = pm.fs.read_manifest(problem.slug)
-    return manifest.test.cases
+    filtered_cases = crud.problem.get_cases(
+        db, pm,
+        problem,
+        manifest
+    )
+
+    return filtered_cases
 
 
 @router.get("/slug/{slug}/cases", response_model=List[schemas.TestCase])
@@ -207,7 +213,13 @@ def get_testcases_by_slug(
     problem = problem_hoops(problem, current_user, slug=slug)
 
     manifest = pm.fs.read_manifest(problem.slug)
-    return manifest.test.cases
+    filtered_cases = crud.problem.get_cases(
+        db, pm,
+        problem,
+        manifest
+    )
+
+    return filtered_cases
 
 
 # Submissions:
