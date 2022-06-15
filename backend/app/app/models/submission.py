@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Column, ForeignKey, Integer, String, Boolean
+from sqlalchemy import Column, ForeignKey, Integer, String, Boolean, DateTime
 from sqlalchemy.orm import relationship
 
 from app.db.base_class import Base
@@ -22,6 +22,12 @@ class Submission(Base, TimestampedMixin):
     # The judger that went through with the evaluation
     judger_id = Column(Integer, ForeignKey("judger.id"))
     judger = relationship("Judger", foreign_keys=[judger_id], uselist=False)
+
+    # Has evaluation finished
+    evaluated = Column(Boolean, default=False)
+
+    evaluation_begin = Column(DateTime, nullable=True)
+    evaluation_end = Column(DateTime, nullable=True)
 
     # The language used
     language_id = Column(String, ForeignKey("language.id"))
