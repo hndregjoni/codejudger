@@ -1,3 +1,3 @@
 """ Application wide exceptions """
 
-from .tag import TagNotExistsError
+from .tag import TagNotFoundException

@@ -33,7 +33,7 @@ def init_db(db: Session) -> None:
             password=settings.FIRST_SUPERUSER_PASSWORD,
             is_superuser=True,
         )
-        user = crud.user.create(db, obj_in=user_in)  # noqa: F841
+        user = crud.user.create(db, obj_in=user_in, is_active=True)  # noqa: F841
 
         crud.user.assign_role(db, user, models.role.UserRoles.Admin)
         crud.user.assign_role(db, user, models.role.UserRoles.Solver)

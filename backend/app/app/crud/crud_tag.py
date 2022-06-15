@@ -7,7 +7,7 @@ from app.crud.base import CRUDBase
 from app.models.tag import Tag
 from app.schemas.tag import TagCreate, TagUpdate
 from app.schemas.tag import Tag as TagSchema
-from app.exceptions import TagNotExistsError
+from app.exceptions import TagNotFoundException
 
 class CRUDTag(CRUDBase[TagSchema, TagCreate, TagUpdate]):
     model: Tag
@@ -37,7 +37,7 @@ class CRUDTag(CRUDBase[TagSchema, TagCreate, TagUpdate]):
         
         for ident in identifiers:
             if not any([tag for tag in db_tags if tag.has_identifier(ident)]):
-                raise TagNotExistsError(ident)
+                raise TagNotFoundException(ident)
 
     def get_multi_slugs(self, db: Session, slugs: List[int]) -> List[Tag]:
         result = db.query(self.model).filter(self.model.slug.in_(slugs)).all()

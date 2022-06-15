@@ -1,4 +1,4 @@
-from typing import Any, List
+from typing import Any, List, Optional
 
 from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
@@ -9,6 +9,10 @@ from app import crud, models, schemas
 from app.api import deps
 from app.core.config import settings
 from app.utils import send_new_account_email
+from app.exceptions.http.auth import NoOpenUserRegistrationError
+from app.exceptions.http.user import UserExistsError
+from app.exceptions.tag import TagNotFoundException
+from app.exceptions.http.tag import TagNotFoundError
 
 router = APIRouter()
 
@@ -32,22 +36,34 @@ def create_user(
     *,
     db: Session = Depends(deps.get_db),
     user_in: schemas.UserCreate,
-    current_user: models.User = Depends(deps.get_current_active_user),
+    current_user: Optional[models.User] = Depends(deps.make_user_dependency(
+        required=False, # Open login
+        only_active=True # If not opne, we need an active superuser
+        # TODO: admin scope here
+    ))
 ) -> Any:
     """
     Create new user.
     """
+
+    if not current_user and not settings.USERS_OPEN_REGISTRATION:
+        raise NoOpenUserRegistrationError()
+
     user = crud.user.get_by_username_or_email(db, username=user_in.username, email=user_in.email)
+
     if user:
-        raise HTTPException(
-            status_code=400,
-            detail="The user with this username or email already exists in the system.",
-        )
-    user = crud.user.create(db, obj_in=user_in)
+        raise UserExistsError(user.username)
+    
+    try:
+        user = crud.user.create(db, obj_in=user_in)
+    except TagNotFoundException as e:
+        raise TagNotFoundError(e.tag)
+
     if settings.EMAILS_ENABLED and user_in.email:
         send_new_account_email(
             email_to=user_in.email, username=user_in.email, password=user_in.password
         )
+
     return user
 
 
@@ -84,32 +100,6 @@ def read_user_me(
     Get current user.
     """
     return current_user
-
-
-@router.post("/open", response_model=schemas.User)
-def create_user_open(
-    *,
-    user_in: schemas.UserCreate,
-    db: Session = Depends(deps.get_db),
-) -> Any:
-    """
-    Create new user without the need to be logged in.
-    """
-    if not settings.USERS_OPEN_REGISTRATION:
-        raise HTTPException(
-            status_code=403,
-            detail="Open user registration is forbidden on this server",
-        )
-    user = crud.user.get_by_email(db, email=email)
-    if user:
-        raise HTTPException(
-            status_code=400,
-            detail="The user with this username already exists in the system",
-        )
-    user_in = schemas.UserCreate(password=password, email=email, full_name=full_name)
-    user = crud.user.create(db, obj_in=user_in)
-    return user
-
 
 @router.get("/{user_id}", response_model=schemas.User)
 def read_user_by_id(

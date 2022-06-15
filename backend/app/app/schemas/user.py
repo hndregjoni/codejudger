@@ -1,27 +1,39 @@
 from typing import Optional, List, Any
+from wsgiref import validate
 
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, validator
 from pydantic.utils import GetterDict
 
 from .tag import Tag, extract_slug
 from .role import UserRole, extract_role_name
 from app.core.config import settings
+from .util import _validate_test_cases
 
 
 # Shared properties
-class UserBase(BaseModel):
+
+class UserBaseNoActive(BaseModel):
     username: str = Field(..., regex=settings.USERNAME_REGEX)
 
     email: Optional[EmailStr] = None
-    is_active: Optional[bool] = True
     is_superuser: bool = False
     full_name: Optional[str] = None
 
+class UserBase(UserBaseNoActive):
+    is_active: Optional[bool] = True
 
 # Properties to receive via API on creation
-class UserCreate(UserBase):
+class UserCreate(UserBaseNoActive):
     email: EmailStr
     password: str
+
+    interests: List[str]
+    @validator("interests")
+    def validate_interests(cls, v):
+        return _validate_test_cases(cls, v)
+
+    gender: int
+    bio: str = Field(..., max_length=200)
 
 
 # Properties to receive via API on update

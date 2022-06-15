@@ -3,6 +3,7 @@ from typing import Any, Dict, Optional, Union
 from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
+from app import crud
 from app.core.security import get_password_hash, verify_password
 from app.crud.base import CRUDBase
 from app.models.user import User, user_roles
@@ -26,14 +27,19 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
     ) -> Optional[User]:
         return db.query(User).filter(or_(User.username == username, User.email == email)).first()
 
-    def create(self, db: Session, *, obj_in: UserCreate) -> User:
+    def create(self, db: Session, *, obj_in: UserCreate, is_active: bool = False) -> User:
         db_obj = User(
             username=obj_in.username,
             email=obj_in.email,
             hashed_password=get_password_hash(obj_in.password),
             full_name=obj_in.full_name,
             is_superuser=obj_in.is_superuser,
+            is_active=False
         )
+
+        tags = crud.tag.get_multi_poly(db, obj_in.tags)
+        db_obj.interests.extend(tags)
+
         db.add(db_obj)
         db.commit()
         db.refresh(db_obj)

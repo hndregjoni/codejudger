@@ -7,6 +7,8 @@ from pydantic.utils import GetterDict
 from pydantic.dataclasses import dataclass
 
 from .tag import extract_slug
+
+from .util import _validate_test_cases
 from app.core.config import settings
 
 
@@ -60,16 +62,7 @@ class ProblemCreate(BaseModel):
     test_cases: List[TestCase]
     @validator("test_cases")
     def validate_test_cases(cls, cases):
-        if cases is None or  not (0 < len(cases) <= settings.MAX_CASES):
-            raise ValueError("You must provide test cases")
-        
-        test_set: Set[str] = {}
-        # Check for duplicates
-        for case in cases:
-            if case.a in test_set:
-                raise ValueError(f"Test case duplicate: {case.a}")
-        
-        return cases
+        return _validate_test_cases(cls, cases)
 
     constraints: Optional[ProblemConstraints]
     tags: Optional[Union[List[str], List[int]]]

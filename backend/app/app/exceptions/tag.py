@@ -1,6 +1,6 @@
 from typing import Union, List
 
-class TagNotExistsError(Exception):
+class TagNotFoundException(Exception):
     """ A tag does not exist in the system """
     tag: Union[int, str]
 

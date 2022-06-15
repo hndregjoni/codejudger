@@ -9,3 +9,9 @@ class UserInactiveError(BaseError):
 
     def __init__(self, user: str):
         super().__init__(UserInactiveError, user, "User is inactive") 
+
+class NoOpenUserRegistrationError(BaseError):
+    CODE: int = status.HTTP_401_UNAUTHORIZED
+
+    def __init__(self):
+        super().__init__(NoOpenUserRegistrationError, "", "Open registration is disabled")

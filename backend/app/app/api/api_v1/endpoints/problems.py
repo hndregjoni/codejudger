@@ -9,11 +9,12 @@ from sqlalchemy.orm import Session
 
 from app import crud, models, schemas
 from app.api import deps
-from app.exceptions.tag import TagNotExistsError
+from app.exceptions.tag import TagNotFoundException
 from app.core.problem_manager import ProblemManager
 from app.exceptions.http.problem import CannotAttemptError, NotAttemptedError, ProblemNotFoundError
 from app.schemas.attempt import SubmissionCreate, SubmissionView
 from app.exceptions.http.language import LanguageNotFoundError
+from app.exceptions.http.tag import TagNotFoundError
 
 router = APIRouter()
 
@@ -67,8 +68,8 @@ def create_problem(
     try:
         item = crud.problem.create_problem(db, pm, obj_in=problem_in, author=current_user)
         return item
-    except TagNotExistsError as e:
-        raise HTTPException(status_code=400, detail=f"The tag {e.tag} does not exist!")
+    except TagNotFoundException as e:
+        raise TagNotFoundError(e.tag)
 
 
 @router.get("/id/{id}", responses=responses)
