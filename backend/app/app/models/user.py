@@ -39,3 +39,5 @@ class User(Base, TimestampedMixin):
 
     problems_authored = relationship("Problem", back_populates="author")
     attempts = relationship("ProblemAttempt", back_populates="user")
+
+    submissions = relationship("Submission", back_populates="user")

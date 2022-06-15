@@ -1,3 +1,4 @@
+from collections import UserList
 from typing import TYPE_CHECKING
 
 from sqlalchemy import Column, ForeignKey, Integer
@@ -8,11 +9,14 @@ from app.db.base_class import Base
 class ProblemAttempt(Base):
     # Side of the user
     user_id = Column(Integer, ForeignKey("user.id"), primary_key=True, unique=True)
-    user = relationship("User", back_populates="attempts")
+    user = relationship("User", back_populates="attempts", uselist=False)
 
     # Side of the problem
     problem_id = Column(Integer, ForeignKey("problem.id"), primary_key=True, unique=True)
-    problem = relationship("Problem", back_populates="attempts")
+    problem = relationship("Problem", back_populates="attempts", uselist=False)
+
+    # List of submissions for this attempt:
+    submissions = relationship("Submission", back_populates="attempt")
 
     # Data pertainting to the relationship between a user and a problem
     first_submission_id = Column(Integer, ForeignKey("submission.id"))
