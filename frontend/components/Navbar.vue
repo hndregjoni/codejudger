@@ -33,10 +33,8 @@
                 >mdi-moon-waxing-crescent</v-icon
               >
             </v-btn>
-            <v-btn fab dense small text>
-              <v-icon>mdi-bell</v-icon>
-            </v-btn>
-
+            
+            <notification-menu :width="250"/>
             <profile-menu/>
           </div>
         </v-col>
@@ -60,7 +58,9 @@
 </style>
 
 <script>
+import NotificationMenu from './NotificationMenu.vue';
 export default {
+  components: { NotificationMenu },
   methods: {
     toggleMode() {
       this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
