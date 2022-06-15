@@ -1,6 +1,9 @@
 from typing import TYPE_CHECKING
 
+from enum import Enum
+
 from sqlalchemy import Boolean, Column, Integer, String, Table, ForeignKey
+from sqlalchemy import Enum as _Enum
 from sqlalchemy.orm import relationship
 
 from app.db.base_class import Base
@@ -23,6 +26,8 @@ user_interests = Table(
     Column('tag_id', ForeignKey("tag.id"), primary_key=True)
 )
 
+Gender = Enum("Gender", "Male Female Other NotSpecified")
+
 class User(Base, TimestampedMixin):
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=True, index=True)
@@ -41,3 +46,9 @@ class User(Base, TimestampedMixin):
     attempts = relationship("ProblemAttempt", back_populates="user")
 
     submissions = relationship("Submission", back_populates="user")
+
+    # Additional profile information
+    bio = Column(String(200))
+    gender = Column(_Enum(Gender))
+
+    # Eventually a profile picture:
