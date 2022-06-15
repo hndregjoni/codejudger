@@ -16,7 +16,7 @@
       </v-tabs>
     </v-flex>
     <v-flex>
-      <v-card class="mx-auto overflow-hidden rounded-0" height="100%">
+      <v-card  height="100%" style="border:solid 1px red">
         <v-row class="primary" justify="space-between" align="center">
           <v-col>
             <v-select
@@ -37,15 +37,20 @@
             </div>
           </v-col>
         </v-row>
-
+        <v-row  class="pr-2" >
         <codemirror
+          :style="{position:'fixed',width:'49.5%', height:'100%'}"
           ref="myCm"
+          :matchBrackets= "true"
+        :fixedGutter="true"
+        :autoCloseBrackets="true"
           :value="code"
           :options="cmOptions"
           @ready="onCmReady"
           @focus="onCmFocus"
           @input="onCmCodeChange"
         />
+        </v-row>
       </v-card>
     </v-flex>
   </v-layout>
@@ -67,12 +72,16 @@
 // theme css
 import "codemirror/theme/dracula.css";
 // more codemirror resources
+import "codemirror/addon/edit/matchbrackets.js"
+import "codemirror/addon/wrap/hardwrap.js"
+
+import "codemirror/addon/edit/closebrackets.js" 
 import "codemirror/mode/sql/sql.js";
 import "codemirror/mode/python/python.js";
 import "codemirror/mode/go/go.js";
 import "codemirror/mode/haskell/haskell.js";
 import "codemirror/mode/clojure/clojure.js";
-
+import "codemirror/src/display/scrolling.js";
 // import 'codemirror/some-resource...'
 export default {
   data() {
@@ -80,12 +89,16 @@ export default {
       languages: ['Python', 'Java', 'Go', 'Clojure'],
       code: "const a = 10",
       cmOptions: {
-        // codemirror options
+        lineWrapping:true,
+        matchBrackets:true,
+        autoCloseBrackets :true,
+        column:80,
+         // codemirror options
         tabSize: 4,
-        mode: { name: "sql" },
+        mode: { name: "python" },
         theme: "dracula",
         lineNumbers: true,
-        line: true,
+        line: true  ,
       },
     };
   },
