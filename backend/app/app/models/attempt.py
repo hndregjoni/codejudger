@@ -1,7 +1,7 @@
 from collections import UserList
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Column, ForeignKey, Integer
+from sqlalchemy import Column, ForeignKey, Integer, ForeignKeyConstraint
 from sqlalchemy.orm import relationship
 
 from app.db.base_class import Base
@@ -16,9 +16,15 @@ class ProblemAttempt(Base):
     problem = relationship("Problem", back_populates="attempts", uselist=False)
 
     # List of submissions for this attempt:
-    submissions = relationship("Submission", back_populates="attempt")
+    # submissions = relationship("Submission", back_populates="attempt")
 
     # Data pertainting to the relationship between a user and a problem
     first_submission_id = Column(Integer, ForeignKey("submission.id"))
+    first_submission = relationship("Submission", foreign_keys=[first_submission_id], uselist=False)
+
     effective_submission_id = Column(Integer, ForeignKey("submission.id"))
+    effective_submission = relationship("Submission", foreign_keys=[effective_submission_id], uselist=False)
+
+
     active_submission_id = Column(Integer, ForeignKey("submission.id"))
+    active_submission = relationship("Submission", foreign_keys=[active_submission_id], uselist=False)

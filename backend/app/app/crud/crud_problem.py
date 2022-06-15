@@ -1,5 +1,4 @@
-from operator import not_
-from typing import List, Optional
+from typing import List, Optional, Tuple
 from datetime import datetime
 
 from fastapi.encoders import jsonable_encoder
@@ -15,6 +14,9 @@ from app.schemas.problem import ProblemCreate, ProblemUpdate, TestCase
 import app.core.problem_manager as problem_manager
 from app.core.problem_manager.problem_manifest import ProblemManifest
 from app.core.problem_manager.manager import ProblemManager
+from app.models.submission import Submission
+from app.schemas.attempt import SubmissionCreate
+from app.models.attempt import ProblemAttempt
 
 class CRUDProblem(CRUDBase[Problem, ProblemCreate, ProblemUpdate]):
     def create_problem(
@@ -150,5 +152,63 @@ class CRUDProblem(CRUDBase[Problem, ProblemCreate, ProblemUpdate]):
     def get_with_slug(self, db: Session, slug: str) -> Optional[Problem]:
         """ Get an tag by its slug """
         return self.get_with_filter(db, self.model.slug == slug)
+    
+    def get_or_create_attempt(
+        self,
+        db: Session,
+        user: User,
+        problem: Problem
+    ) -> Tuple[ProblemAttempt, bool]:
+        """ Gets an attempt between user-problem, or creats one.
+        
+        Returns:
+            (attempt, new): The attempt and whether it was newly created. """
+
+        new = False
+        attempt = db.query(ProblemAttempt).filter(
+            ProblemAttempt.user_id == user.id,
+            ProblemAttempt.problem_id == problem.id
+        ).first()
+
+        if not attempt:
+            new = True
+            new_attempt = ProblemAttempt()
+            new_attempt.user_id = user.id
+            new_attempt.problem_id = problem.id
+            attempt = new_attempt
+        
+        return attempt, new
+
+    def add_submission(
+        self,
+        db: Session,
+        problem: Problem,
+        user: User,
+        obj_in: SubmissionCreate
+    ) -> Tuple[Submission, ProblemAttempt]:
+        """ Adds a submission between specified user and problem. """
+
+        # First check whether an attempt between the two exists, if not
+        # create one
+        attempt, new = self.get_or_create_attempt(db, user, problem)
+
+        obj_in_data = jsonable_encoder(obj_in)
+        new_sub = Submission(**obj_in_data)
+        new_sub.user_id = user.id
+        new_sub.problem_id = problem.id
+
+        if new:
+            attempt.first_submission = new_sub 
+
+        if new:
+            db.add(attempt)
+        
+        db.add(new_sub)
+        db.commit()
+        db.refresh(new_sub)
+        db.refresh(attempt)
+
+        return new_sub, attempt
+
 
 problem = CRUDProblem(Problem)

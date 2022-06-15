@@ -8,6 +8,8 @@ Create Date: 2022-06-15 01:03:38.031934
 from alembic import op
 import sqlalchemy as sa
 
+from app.core.config import settings
+
 
 # revision identifiers, used by Alembic.
 revision = 'acfa549599ba'
@@ -22,7 +24,7 @@ def upgrade():
     op.add_column('submission', sa.Column('updated_at', sa.DateTime(), nullable=True))
     op.add_column('submission', sa.Column('user_id', sa.Integer(), nullable=True))
     op.add_column('submission', sa.Column('problem_id', sa.Integer(), nullable=True))
-    op.add_column('submission', sa.Column('code', sa.String(length=20000), nullable=True))
+    op.add_column('submission', sa.Column('code', sa.String(length=settings.MAX_SOL_LEN), nullable=True))
     op.add_column('submission', sa.Column('judger_id', sa.Integer(), nullable=True))
     op.add_column('submission', sa.Column('language_id', sa.String(), nullable=True))
     op.add_column('submission', sa.Column('passed', sa.Integer(), nullable=True))

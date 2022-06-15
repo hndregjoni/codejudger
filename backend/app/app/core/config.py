@@ -105,5 +105,7 @@ class Settings(BaseSettings):
     # max constraints of spacetime type
     MAX_SPACETIME_CONSTRAINTS = 10
 
+    MAX_SOL_LEN=20000
+
 
 settings = Settings()

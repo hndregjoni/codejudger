@@ -1,4 +1,5 @@
 from typing import Any, List, Optional
+from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import Response
@@ -7,15 +8,11 @@ from sqlalchemy.orm import Session
 
 
 from app import crud, models, schemas
-
-# from app.models.problem import Problem
-# from app.schemas.problem import ProblemCreate, ProblemUpdate
-# from app.schemas.problem import Problem as ProblemSchema
-
 from app.api import deps
 from app.exceptions.tag import TagNotExistsError
 from app.core.problem_manager import ProblemManager
-from app.exceptions.http.problem import ProblemNotFoundError
+from app.exceptions.http.problem import CannotAttemptError, ProblemNotFoundError
+from app.schemas.attempt import SubmissionCreate, SubmissionView
 
 router = APIRouter()
 
@@ -234,6 +231,26 @@ def get_submissions_by_id(
     """ Attempt a problem by id """
     pass
 
+@router.post("/id/{id}/subs", response_model=SubmissionView)
+def create_submission_by_id(
+    *,
+    db: Session = Depends(deps.get_db),
+    id: int,
+    sub_in: SubmissionCreate,
+    current_user: models.User = Depends(deps.get_current_active_user)
+) -> Any:
+    """ Post a submission. """
+    now = datetime.now()
+    problem = crud.problem.get(db, id=id)
+    problem = problem_hoops(problem, current_user, id=id)
+
+    # If user somehow cannot attempt this problem, we raise exception
+    if not crud.problem.can_attempt(db, current_user, problem, now):
+        raise CannotAttemptError(id=id)
+    
+    sub, attempt = crud.problem.add_submission(db, problem, current_user, sub_in)
+
+    return sub
 
 @router.get("/id/{slug}/subs")
 def get_submissions_by_slug(
@@ -244,3 +261,25 @@ def get_submissions_by_slug(
 ) -> Any:
     """ Attempt a problem by id """
     pass
+
+
+@router.post("/slug/{slug}/subs", response_model=SubmissionView)
+def create_submission_by_slug(
+    *,
+    db: Session = Depends(deps.get_db),
+    slug: str,
+    sub_in: SubmissionCreate,
+    current_user: models.User = Depends(deps.get_current_active_user)
+) -> Any:
+    """ Post a submission. """
+    now = datetime.now()
+    problem = crud.problem.get_with_slug(db, slug=slug)
+    problem = problem_hoops(problem, current_user, slug=slug)
+
+    # If user somehow cannot attempt this problem, we raise exception
+    if not crud.problem.can_attempt(db, current_user, problem, now):
+        raise CannotAttemptError(slug=slug)
+    
+    sub, attempt = crud.problem.add_submission(db, problem, current_user, sub_in)
+
+    return sub

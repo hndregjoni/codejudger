@@ -1,10 +1,13 @@
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Column, ForeignKey, Integer, String, Boolean, DateTime
+from sqlalchemy import Column, ForeignKey, Integer, String, Boolean, DateTime, ForeignKeyConstraint
 from sqlalchemy.orm import relationship
 
 from app.db.base_class import Base
 from app.db.mixins import TimestampedMixin
+from app.core.config import settings
+
+from .attempt import ProblemAttempt
 
 class Submission(Base, TimestampedMixin):
     id = Column(Integer, primary_key=True, index=True)
@@ -15,9 +18,18 @@ class Submission(Base, TimestampedMixin):
     problem_id = Column(Integer, ForeignKey("problem.id"))
     problem = relationship("Problem", foreign_keys=[problem_id], uselist=False)
 
-    attempt = relationship("ProblemAttempt", foreign_keys=[user_id, problem_id], uselist=False)
+    # Specify the composite foreign key
+    __table_args__ = (
+        ForeignKeyConstraint(
+            [user_id, problem_id],
+            ['problemattempt.user_id', 'problemattempt.problem_id'],
+            name="fkey_submission_problemattempt"),
+    {})
 
-    code = Column(String(20000))
+    attempt = relationship("ProblemAttempt", backref="submissions", foreign_keys=[user_id, problem_id], uselist=False)
+
+    # This has an appropriate migration tweak, but only valid during the initial migration
+    code = Column(String(settings.MAX_SOL_LEN))
 
     # The judger that went through with the evaluation
     judger_id = Column(Integer, ForeignKey("judger.id"))
