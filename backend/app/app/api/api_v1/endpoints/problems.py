@@ -11,7 +11,7 @@ from app import crud, models, schemas
 from app.api import deps
 from app.exceptions.tag import TagNotExistsError
 from app.core.problem_manager import ProblemManager
-from app.exceptions.http.problem import CannotAttemptError, ProblemNotFoundError
+from app.exceptions.http.problem import CannotAttemptError, NotAttemptedError, ProblemNotFoundError
 from app.schemas.attempt import SubmissionCreate, SubmissionView
 from app.exceptions.http.language import LanguageNotFoundError
 
@@ -222,15 +222,26 @@ def get_testcases_by_slug(
 
 # Submissions:
 
-@router.get("/id/{id}/subs")
+@router.get("/id/{id}/subs", response_model=List[SubmissionView])
 def get_submissions_by_id(
     *,
     db: Session = Depends(deps.get_db),
     id: int, 
-    current_user: models.User = Depends(deps.get_current_active_user)
+    current_user: models.User = Depends(deps.get_current_active_user),
+
+    skip: int = 0,
+    limit: int = 100
 ) -> Any:
-    """ Attempt a problem by id """
-    pass
+    """ Get submissions for given problem id """
+    problem = crud.problem.get(db, id=id)
+    problem = problem_hoops(problem, current_user, id=id)
+
+    attempt = crud.problem.get_attempt(db, current_user, problem)
+
+    if not attempt:
+        raise NotAttemptedError(current_user, problem)
+    
+    return crud.problem.get_submissions_for_user_problem(db, current_user, problem, skip, limit)
 
 @router.post("/id/{id}/subs", response_model=SubmissionView)
 def create_submission_by_id(
@@ -256,15 +267,26 @@ def create_submission_by_id(
 
     return sub
 
-@router.get("/id/{slug}/subs")
+@router.get("/slug/{slug}/subs")
 def get_submissions_by_slug(
     *,
     db: Session = Depends(deps.get_db),
     slug: str, 
-    current_user: models.User = Depends(deps.get_current_active_user)
+    current_user: models.User = Depends(deps.get_current_active_user),
+
+    skip: int = 0,
+    limit: int = 100
 ) -> Any:
-    """ Attempt a problem by id """
-    pass
+    """ Get submissions for given problem slug """
+    problem = crud.problem.get(db, slug=slug)
+    problem = problem_hoops(problem, current_user, slug=slug)
+
+    attempt = crud.problem.get_attempt(db, current_user, problem)
+
+    if not attempt:
+        raise NotAttemptedError(current_user, problem)
+    
+    return crud.problem.get_submissions_for_user_problem(db, current_user, problem, skip, limit)
 
 
 @router.post("/slug/{slug}/subs", response_model=SubmissionView)

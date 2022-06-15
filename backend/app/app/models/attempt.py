@@ -16,7 +16,8 @@ class ProblemAttempt(Base):
     problem = relationship("Problem", back_populates="attempts", uselist=False)
 
     # List of submissions for this attempt:
-    # submissions = relationship("Submission", back_populates="attempt")
+    submissions = relationship("Submission", back_populates="attempt", primaryjoin="and_(ProblemAttempt.user_id==Submission.user_id,"
+        "ProblemAttempt.problem_id==Submission.problem_id)")
 
     # Data pertainting to the relationship between a user and a problem
     first_submission_id = Column(Integer, ForeignKey("submission.id"))

@@ -4,6 +4,8 @@ from fastapi import status
 
 from .base import BaseError
 
+from app.models import User, Problem
+
 class ProblemNotFoundError(BaseError):
     CODE: int = status.HTTP_404_NOT_FOUND
 
@@ -15,3 +17,9 @@ class CannotAttemptError(BaseError):
 
     def __init__(self, slug: Optional[str] = None, id: Optional[int] = None):
         super().__init__(CannotAttemptError, slug if slug else id, "Problem cannot be attempted by user") 
+
+class NotAttemptedError(BaseError):
+    CODE: int = status.HTTP_404_NOT_FOUND
+
+    def __init__(self, user: User, problem: Problem):
+        super().__init__(CannotAttemptError, [user.username, problem.slug], "Problem not attempted by user") 

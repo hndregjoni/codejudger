@@ -26,7 +26,7 @@ class Submission(Base, TimestampedMixin):
             name="fkey_submission_problemattempt"),
     {})
 
-    attempt = relationship("ProblemAttempt", backref="submissions", foreign_keys=[user_id, problem_id], uselist=False)
+    attempt = relationship("ProblemAttempt", back_populates="submissions", foreign_keys=[user_id, problem_id], uselist=False)
 
     # This has an appropriate migration tweak, but only valid during the initial migration
     code = Column(String(settings.MAX_SOL_LEN))

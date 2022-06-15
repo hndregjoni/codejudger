@@ -2,7 +2,7 @@ from typing import List, Optional, Tuple
 from datetime import datetime
 
 from fastapi.encoders import jsonable_encoder
-from sqlalchemy import not_
+from sqlalchemy import not_, and_
 from sqlalchemy.orm import Session
 
 from app import schemas, crud
@@ -153,6 +153,21 @@ class CRUDProblem(CRUDBase[Problem, ProblemCreate, ProblemUpdate]):
         """ Get an tag by its slug """
         return self.get_with_filter(db, self.model.slug == slug)
     
+    def get_attempt(
+        self,
+        db: Session,
+        user: User,
+        problem: Problem
+    ) -> Optional[ProblemAttempt]:
+        """ Gets a problem attempt for given usern and problem. """
+        attempt = db.query(ProblemAttempt).filter(
+            ProblemAttempt.user_id == user.id,
+            ProblemAttempt.problem_id == problem.id
+        ).first()
+
+        return attempt
+
+    
     def get_or_create_attempt(
         self,
         db: Session,
@@ -165,10 +180,7 @@ class CRUDProblem(CRUDBase[Problem, ProblemCreate, ProblemUpdate]):
             (attempt, new): The attempt and whether it was newly created. """
 
         new = False
-        attempt = db.query(ProblemAttempt).filter(
-            ProblemAttempt.user_id == user.id,
-            ProblemAttempt.problem_id == problem.id
-        ).first()
+        attempt = self.get_attempt(db, user, problem)
 
         if not attempt:
             new = True
@@ -209,6 +221,24 @@ class CRUDProblem(CRUDBase[Problem, ProblemCreate, ProblemUpdate]):
         db.refresh(attempt)
 
         return new_sub, attempt
+    
+    def get_submissions_for_user_problem(
+        self,
+        db: Session,
+        user: User,
+        problem: Problem,
 
+        skip: int = 0,
+        limit: int = 10
+    ) -> List[Submission]:
+        """ Returns a list of submissions from the given user for the given problem. """
+        return self.paginate(
+            db.query(Submission).filter(
+                and_(Submission.user_id == user.id,
+                    Submission.problem_id == problem.id)
+            ),
+
+            skip, limit
+        ).all()
 
 problem = CRUDProblem(Problem)
