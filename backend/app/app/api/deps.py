@@ -63,6 +63,9 @@ def _get_user(
 
 def _filter_active(get_user_dep):
     def filter_active(user = Depends(get_user_dep)):
+        if not user:
+            return None
+
         if not crud.user.is_active(user):
             raise UserInactiveError(user.username)
         

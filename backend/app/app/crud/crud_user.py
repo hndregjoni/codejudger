@@ -37,8 +37,10 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
             is_active=False
         )
 
-        tags = crud.tag.get_multi_poly(db, obj_in.tags)
+        tags = crud.tag.get_multi_poly(db, obj_in.interests)
         db_obj.interests.extend(tags)
+
+        self.assign_role(db, user, UserRoles.Solver, commit=False)
 
         db.add(db_obj)
         db.commit()
@@ -72,7 +74,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
     def is_superuser(self, user: User) -> bool:
         return user.is_superuser
     
-    def assign_role(self, db: Session, user: User, role: UserRoles) -> bool:
+    def assign_role(self, db: Session, user: User, role: UserRoles, commit: bool = True) -> bool:
         """ Assing the roles, and return whether the assignment was effective """ 
         if self.has_role(db, user, role):
             print("Had role!")
@@ -81,7 +83,8 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         role = db.query(UserRole).filter(UserRole.id == role.value).first()
 
         user.roles.append(role)
-        db.commit()
+        if commit:
+            db.commit()
         return True
 
 

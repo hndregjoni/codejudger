@@ -9,7 +9,7 @@ def _validate_test_cases(cls, cases):
     test_set: Set[str] = {}
     # Check for duplicates
     for case in cases:
-        if case.a in test_set:
+        if case in test_set:
             raise ValueError(f"Test case duplicate: {case.a}")
     
     return cases
