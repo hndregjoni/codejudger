@@ -12,19 +12,52 @@
               label="Search"
               single-line
               hide-details
-            ></v-text-field>
+            >
+            </v-text-field>
           </v-card-title>
+          <v-row>
+            <v-select
+              style="width: 29%"
+              class="pa-2 ml-3"
+              label="Difficulty level"
+              :items="['easy', 'medium', 'hard']"
+              v-model="search"
+            ></v-select>
+            <v-select
+              style="width: 29%"
+              class="pa-2"
+              :items="[
+                'Not-attempted',
+                'Attempted',
+                'Solved',
+                'Frozen',
+                'Disabled',
+              ]"
+              label="Status"
+              v-model="search"
+            >
+            </v-select>
+            <v-select
+              style="width: 29%"
+              class="pa-2 mr-3"
+              label="Tags"
+              :items="['Python', 'Java', 'Go', 'Clojure']"
+              v-model="search"
+            ></v-select>
+          </v-row>
           <v-data-table
             class="mytab"
             :headers="headers"
-            :items="problems"
+            :items="filteredItems"
             :search="search"
-          ></v-data-table>
+            hide-details
+          >
+          </v-data-table>
         </v-card>
       </v-col>
       <v-col cols="auto">
         <v-card class="pa-2 mb-4">
-          <v-btn 
+          <v-btn
             block
             outlined
             text
@@ -37,7 +70,6 @@
           </v-btn>
         </v-card>
         <v-card>
-
           <v-date-picker v-model="picker"></v-date-picker>
         </v-card>
       </v-col>
@@ -55,10 +87,11 @@
 export default {
   data() {
     return {
-      
-      picker: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
-      
+      picker: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+        .toISOString()
+        .substr(0, 10),
       search: "",
+
       headers: [
         {
           text: "Title",
@@ -66,85 +99,84 @@ export default {
           sortable: false,
           value: "name",
         },
-        { text: "Difficulty lvl.", value: "difficulty" },
-        { text: "Date posted", value: "date" },
-        { text: "Status", value: "status" },
-        { text: "Tags", value: "tag" },
+        { text: "Difficulty lvl.", value: "difficulty", sortable: false },
+        { text: "Date posted", value: "date", dataType: "Date" },
+        { text: "Status", value: "status", sortable: false },
+        { text: "Tags", value: "tag", sortable: false },
       ],
       problems: [
         {
-          name: "Frozen Yogurt",
-          difficulty: 159,
-          date: 6.0,
-          status: 24,
-          tag: 4.0,
+          name: "b",
+          difficulty: "hard",
+          date: new Date().toISOString().substring(0, 10),
+          status: " Not-attempted",
+          tag: "Python",
         },
         {
-          name: "Eclair",
-          calories: 262,
-          fat: 16.0,
-          carbs: 23,
-          protein: 6.0,
-          iron: "7%",
+          name: "a",
+          difficulty: "easy",
+          date: new Date().toISOString().substring(0, 10),
+          status: "Attempted",
+          tag: "Java",
         },
         {
-          name: "Cupcake",
-          calories: 305,
-          fat: 3.7,
-          carbs: 67,
-          protein: 4.3,
-          iron: "8%",
+          name: "c",
+          difficulty: "medium",
+          date: new Date().toISOString().substring(0, 10),
+          status: "Solved",
+          tag: "Python",
         },
         {
-          name: "Gingerbread",
-          calories: 356,
-          fat: 16.0,
-          carbs: 49,
-          protein: 3.9,
-          iron: "16%",
+          name: "e",
+          difficulty: " medium",
+          date: new Date().toISOString().substring(0, 10),
+          status: "Attempted",
+          tag: "Java",
         },
         {
-          name: "Jelly bean",
-          calories: 375,
-          fat: 0.0,
-          carbs: 94,
-          protein: 0.0,
-          iron: "0%",
+          name: "f",
+          difficulty: "hard",
+          date: new Date().toISOString().substring(0, 10),
+          status: "Solved",
+          tag: "Python",
         },
         {
-          name: "Lollipop",
-          calories: 392,
-          fat: 0.2,
-          carbs: 98,
-          protein: 0,
-          iron: "2%",
+          name: "d",
+          difficulty: "easy",
+          date: new Date().toISOString().substring(0, 10),
+          status: "Solved",
+          tag: "Java",
         },
         {
-          name: "Honeycomb",
-          calories: 408,
-          fat: 3.2,
-          carbs: 87,
-          protein: 6.5,
-          iron: "45%",
+          name: "g",
+          difficulty: "hard",
+          date: new Date().toISOString().substring(0, 10),
+          status: "Attempted",
+          tag: "Python",
         },
         {
-          name: "Donut",
-          calories: 452,
-          fat: 25.0,
-          carbs: 51,
-          protein: 4.9,
-          iron: "22%",
+          name: "j",
+          difficulty: "easy",
+          date: new Date().toISOString().substring(0, 10),
+          status: "Frozen",
+          tag: "Go",
         },
         {
-          name: "KitKat",
-          calories: 518,
-          fat: 26.0,
-          carbs: 65,
-          protein: 7,
-          iron: "6%",
+          name: "k",
+          difficulty: "easy",
+          date: new Date().toISOString().substring(0, 10),
+          status: "Frozen",
+          tag: "Java",
         },
       ],
     };
+  },
+  computed: {
+    filteredItems() {
+      return this.problems.filter((i) => {
+        return !this.difficultyLvl || i.difficulty === this.difficultyLvl;
+      });
+    },
   },
 };
 </script>
