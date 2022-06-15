@@ -13,6 +13,7 @@ from app.exceptions.tag import TagNotExistsError
 from app.core.problem_manager import ProblemManager
 from app.exceptions.http.problem import CannotAttemptError, ProblemNotFoundError
 from app.schemas.attempt import SubmissionCreate, SubmissionView
+from app.exceptions.http.language import LanguageNotFoundError
 
 router = APIRouter()
 
@@ -244,6 +245,9 @@ def create_submission_by_id(
     problem = crud.problem.get(db, id=id)
     problem = problem_hoops(problem, current_user, id=id)
 
+    if not crud.language.get(db, sub_in.language_id):
+        raise LanguageNotFoundError(sub_in.language_id)
+
     # If user somehow cannot attempt this problem, we raise exception
     if not crud.problem.can_attempt(db, current_user, problem, now):
         raise CannotAttemptError(id=id)
@@ -279,6 +283,9 @@ def create_submission_by_slug(
     # If user somehow cannot attempt this problem, we raise exception
     if not crud.problem.can_attempt(db, current_user, problem, now):
         raise CannotAttemptError(slug=slug)
+    
+    if not crud.language.get(db, sub_in.language_id):
+        raise LanguageNotFoundError(sub_in.language_id)
     
     sub, attempt = crud.problem.add_submission(db, problem, current_user, sub_in)
 
