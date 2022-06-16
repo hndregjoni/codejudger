@@ -10,7 +10,7 @@ from app.api import deps
 from app.core.config import settings
 from app.utils import send_new_account_email
 from app.exceptions.http.auth import NoOpenUserRegistrationError
-from app.exceptions.http.user import UserExistsError
+from app.exceptions.http.user import UserExistsError, UserNotFoundError
 from app.exceptions.tag import TagNotFoundException
 from app.exceptions.http.tag import TagNotFoundError
 
@@ -111,6 +111,10 @@ def read_user_by_id(
     Get a specific user by id.
     """
     user = crud.user.get(db, id=user_id)
+
+    if not user:
+        raise UserNotFoundError(id=user_id)
+
     if user == current_user:
         return user
     if not crud.user.is_superuser(current_user):
@@ -119,20 +123,37 @@ def read_user_by_id(
         )
     return user
 
-@router.get("/id/{user_id}/active")
+@router.get("/id/{user_id}/active", response_model=bool)
 def get_active_status(
     user_id: int,
     db: Session = Depends(deps.get_db)
 ) -> Any:
     """ Get user active status """
 
-@router.put("/id/{user_id}/active")
+    user = crud.user.get(db, id=user_id)
+
+    if not user:
+        raise UserNotFoundError(id=user_id)
+
+    return user.is_active
+    
+
+@router.put("/id/{user_id}/active", response_model=bool)
 def activate_user(
     user_id: int,
     db: Session = Depends(deps.get_db),
     user: models.User = Depends(deps.get_current_active_user) #TODO: super
 ) -> Any:
     """ Activate the user """
+
+    user = crud.user.get(db, id=user_id)
+
+    if not user:
+        raise UserNotFoundError(id=user_id)
+    
+    crud.user.activate_user(db, user)
+    return user.is_active
+
 
 @router.delete("/id/{user_id}/active")
 def deactivate_user(
@@ -142,6 +163,14 @@ def deactivate_user(
 ) -> Any:
     """ Deactivate user"""
 
+    user = crud.user.get(db, id=user_id)
+
+    if not user:
+        raise UserNotFoundError(id=user_id)
+    
+    crud.user.deactivate_user(db, user)
+    return user.is_active
+
 
 @router.get("/id/{user_id}/social")
 def get_user_social_by_id(
@@ -150,12 +179,22 @@ def get_user_social_by_id(
 ) -> Any:
     """ Get a user's social info """
 
+    user = crud.user.get(db, id=user_id)
+
+    if not user:
+        raise UserNotFoundError(id=user_id)
+
 @router.get("/id/{user_id}/followers")
 def get_user_followers(
     user_id: int,
     db: Session = Depends(deps.get_db)
 ) -> Any:
     """ Get user followers """
+
+    user = crud.user.get(db, id=user_id)
+
+    if not user:
+        raise UserNotFoundError(id=user_id)
 
 @router.get("/id/{user_id}/following")
 def get_user_following(
@@ -164,12 +203,22 @@ def get_user_following(
 ) -> Any:
     """ Get user following """
 
+    user = crud.user.get(db, id=user_id)
+
+    if not user:
+        raise UserNotFoundError(id=user_id)
+
 @router.get("/id/{user_id}/follow")
 def get_brief_follow_count(
     user_id: int,
     db: Session = Depends(deps.get_db)
 ) -> Any:
     """ Get a brief follow information over this user """
+
+    user = crud.user.get(db, id=user_id)
+
+    if not user:
+        raise UserNotFoundError(id=user_id)
 
 @router.put("/id/{user_id}/follow")
 def follow_user(
@@ -179,6 +228,11 @@ def follow_user(
 ) -> Any:
     """ Follow this user """
 
+    user = crud.user.get(db, id=user_id)
+
+    if not user:
+        raise UserNotFoundError(id=user_id)
+
 @router.delete("/id/{user_id}/follow")
 def unfollow_user(
     user_id: int,
@@ -186,6 +240,11 @@ def unfollow_user(
     db: Session = Depends(deps.get_db)
 ) -> Any:
     """ Unfollow this user """
+
+    user = crud.user.get(db, id=user_id)
+
+    if not user:
+        raise UserNotFoundError(id=user_id)
 
 @router.put("/id/{user_id}", response_model=schemas.User)
 def update_user(
@@ -200,9 +259,7 @@ def update_user(
     """
     user = crud.user.get(db, id=user_id)
     if not user:
-        raise HTTPException(
-            status_code=404,
-            detail="The user with this username does not exist in the system",
-        )
+        raise UserNotFoundError(id=user_id)
+
     user = crud.user.update(db, db_obj=user, obj_in=user_in)
     return user

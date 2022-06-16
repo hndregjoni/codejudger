@@ -94,6 +94,23 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         """ 
 
         return any([u_role.id == role.value for u_role in user.roles])
+    
+    def activate_user(self, db: Session, user: User) -> bool:
+        """ Activate a user """
+        if user.activated_once == False:
+            user.activated_once = True
+        
+        user.is_active = True
+        db.commit()
 
+        return user.is_active
+
+    
+    def deactivate_user(self, db: Session, user: User) -> bool:
+        """ Deactivate a user """ 
+        user.is_active = False
+        db.commit()
+
+        return user.is_active
 
 user = CRUDUser(User)
