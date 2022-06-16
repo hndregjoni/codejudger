@@ -101,7 +101,7 @@ def read_user_me(
     """
     return current_user
 
-@router.get("/{user_id}", response_model=schemas.User)
+@router.get("/id/{user_id}", response_model=schemas.User)
 def read_user_by_id(
     user_id: int,
     current_user: models.User = Depends(deps.get_current_active_user), #TODO: super
@@ -119,8 +119,75 @@ def read_user_by_id(
         )
     return user
 
+@router.get("/id/{user_id}/active")
+def get_active_status(
+    user_id: int,
+    db: Session = Depends(deps.get_db)
+) -> Any:
+    """ Get user active status """
 
-@router.put("/{user_id}", response_model=schemas.User)
+@router.put("/id/{user_id}/active")
+def activate_user(
+    user_id: int,
+    db: Session = Depends(deps.get_db),
+    user: models.User = Depends(deps.get_current_active_user) #TODO: super
+) -> Any:
+    """ Activate the user """
+
+@router.delete("/id/{user_id}/active")
+def deactivate_user(
+    user_id: int,
+    db: Session = Depends(deps.get_db),
+    user: models.User = Depends(deps.get_current_active_user) #TODO: super
+) -> Any:
+    """ Deactivate user"""
+
+
+@router.get("/id/{user_id}/social")
+def get_user_social_by_id(
+    user_id: int,
+    db: Session = Depends(deps.get_db)
+) -> Any:
+    """ Get a user's social info """
+
+@router.get("/id/{user_id}/followers")
+def get_user_followers(
+    user_id: int,
+    db: Session = Depends(deps.get_db)
+) -> Any:
+    """ Get user followers """
+
+@router.get("/id/{user_id}/following")
+def get_user_following(
+    user_id: int,
+    db: Session = Depends(deps.get_db)
+) -> Any:
+    """ Get user following """
+
+@router.get("/id/{user_id}/follow")
+def get_brief_follow_count(
+    user_id: int,
+    db: Session = Depends(deps.get_db)
+) -> Any:
+    """ Get a brief follow information over this user """
+
+@router.put("/id/{user_id}/follow")
+def follow_user(
+    user_id: int,
+    active_user: models.User = Depends(deps.get_current_active_user),
+    db: Session = Depends(deps.get_db)
+) -> Any:
+    """ Follow this user """
+
+@router.delete("/id/{user_id}/follow")
+def unfollow_user(
+    user_id: int,
+    active_user: models.User = Depends(deps.get_current_active_user),
+    db: Session = Depends(deps.get_db)
+) -> Any:
+    """ Unfollow this user """
+
+@router.put("/id/{user_id}", response_model=schemas.User)
 def update_user(
     *,
     db: Session = Depends(deps.get_db),

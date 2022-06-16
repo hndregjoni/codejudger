@@ -52,3 +52,5 @@ class User(Base, TimestampedMixin):
     gender = Column(_Enum(Gender))
 
     # Eventually a profile picture:
+
+    activated_once = Column(Boolean, default=False)
