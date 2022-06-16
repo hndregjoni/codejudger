@@ -43,17 +43,18 @@
         ></v-text-field>
 
         <v-text-field
-          v-model="password"
+          v-model="confirmPassword"
           :type="'password'"
-          :rules="passwordRules"
+          :rules="[[v => !!v || 'Password is required'], (this.password === this.confirmPassword) || 'Password must match']" 
           label="Confirm password"
           required
         ></v-text-field>
 
+
         <v-row class="mt-5"> </v-row>
         <v-row>
           <v-btn
-            @click="(value1 = false), (value2 = true)"
+            @click="(value1 ^= true), (value2 ^= true)"
             block
             class="btn"
             outlined
@@ -71,7 +72,7 @@
     <v-row justify="center">
       <v-form ref="form" v-model="valid" lazy-validation>
         <v-text-field
-          v-model="name"
+          v-model="full_name"
           :rules="nameRules"
           label="Full name"
           required
@@ -81,39 +82,24 @@
           placeholder="0"
           class="gender pa-0"
           v-model="gender"
-          :items="['Male', 'Female', 'Non-binary']"
+          :items="[
+            { text: 'Male', value: 1 }, 
+            { text: 'Female', value: 2},
+            { text: 'Other', value: 3},
+            { text:'Not specified', value: 4}
+          ]"
           label="Gender"
           required
         ></v-select>
 
         <v-label>Bio</v-label>
 
-        <v-textarea counter="90" solo></v-textarea>
+        <v-textarea counter="90" v-model="bio" solo></v-textarea>
 
-        <v-combobox
-          v-model="chips"
-          :items="['Python', 'Java', 'Go', 'Clojure', 'DFS', 'BFS']"
-          chips
-          clearable
-          label="Interests"
-          multiple
-          prepend-icon="mdi-filter-variant"
-          solo
-        >
-          <template v-slot:selection="{ attrs, item, select, selected }">
-            <v-chip
-              v-bind="attrs"
-              :input-value="selected"
-              close
-              @click="select"
-              @click:close="remove(item)"
-            >
-              <strong>{{ item }}</strong
-              >&nbsp;
-              <span>(interest)</span>
-            </v-chip>
-          </template>
-        </v-combobox>
+        <tag-component
+          v-model="interests"
+          :label="Interests"
+        /> 
 
         <v-row class="mt-5">
           <input
@@ -123,7 +109,20 @@
         </v-row>
         <v-row>
           <v-btn
-            @click="(value1 = false), (value2 = true)"
+            @click="signUp"
+            v-show="value2"
+            block
+            class="btn mb-2"
+            outlined
+            text
+            color="black"
+          >
+            Sign up
+          </v-btn>
+
+          <v-btn
+            @click="secondPage"
+            v-show="value1"
             block
             class="btn"
             outlined
@@ -132,6 +131,18 @@
           >
             Next
           </v-btn>
+          
+          <v-btn
+            @click="firstPage"
+            v-show="value2"
+            block
+            class="btn"
+            outlined
+            text
+            color="black"
+          >
+            Previous
+          </v-btn>
         </v-row>
       </v-form>
     </v-row>
@@ -139,11 +150,18 @@
 </template>
 
 <script>
+import TagComponent from '../components/TagComponent.vue';
 export default {
+  components: { TagComponent },
   auth: false,
 
   data() {
     return {
+      name: "",
+      password: "",
+      full_name: "",
+      interests: ["c"],
+      bio: "",
       value1: true,
       value2: false,
     };
@@ -155,13 +173,38 @@ export default {
     reset() {
       this.$refs.form.reset();
     },
+
     resetValidation() {
       this.$refs.form.resetValidation();
     },
+
     remove(item) {
       this.chips.splice(this.chips.indexOf(item), 1);
       this.chips = [...this.chips];
     },
+
+    secondPage() {
+      this.value1 = false;
+      this.value2 = true;
+    },
+
+    firstPage() {
+      this.value1 = true;
+      this.value2 = false;
+    },
+
+    signUp() {
+      const obj = {
+        username: this.username,
+        email: this.email,
+        gender: this.gender,
+        full_name: this.full_name,
+        interests: this.interests,
+        bio: this.bio
+      }
+
+      console.log(obj);
+    }
   },
 };
 </script> 
