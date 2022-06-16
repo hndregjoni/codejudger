@@ -65,6 +65,16 @@ export default {
           icon: "mdi-gavel",
           url: "/settings/requests",
         },
+         {
+          title: "Problems ",
+          icon: "mdi-bookmark-plus",
+          url: "/settings/problem",
+        },
+         {
+          title: "Manage languages ",
+          icon: "mdi-translate",
+          url: "/settings/languages",
+        },
       ],
     };
   },
