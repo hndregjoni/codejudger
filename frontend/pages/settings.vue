@@ -66,9 +66,9 @@ export default {
           url: "/settings/requests",
         },
          {
-          title: "Problems ",
+          title: "Tags ",
           icon: "mdi-bookmark-plus",
-          url: "/settings/problem",
+          url: "/settings/tags",
         },
          {
           title: "Manage languages ",
