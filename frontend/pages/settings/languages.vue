@@ -4,23 +4,45 @@
       <v-card width="75%">
         <v-card-title> Add Languages </v-card-title>
         <v-row align="center">
-          <v-col cols="2"></v-col>
           <v-col cols="4" class="pb-0">
-            <v-card-text class="py-0"><h4>Slug :</h4></v-card-text>
+            <v-card-text class="py-0"><h4>ID :</h4></v-card-text>
             <v-card-actions
-              ><v-text-field outlined dense filled></v-text-field
+              ><v-text-field v-model="id" outlined dense filled></v-text-field
             ></v-card-actions>
           </v-col>
           <!-- <v-col cols="2"></v-col> -->
           <v-col cols="4" class="pb-0">
             <v-card-text class="py-0"><h4>Name :</h4></v-card-text>
             <v-card-actions
-              ><v-text-field outlined dense filled></v-text-field>
+              ><v-text-field
+                v-model="name"
+                outlined
+                dense
+                filled
+              ></v-text-field>
             </v-card-actions>
           </v-col>
           <v-col class="py-0" cols="2">
-            <v-btn class="py-0" tile filled color="#EEEEEE">Add</v-btn></v-col
+            <v-btn
+              class="py-0"
+              @click="addLanguages"
+              tile
+              filled
+              color="#EEEEEE"
+              >Add</v-btn
+            ></v-col
           >
+        </v-row>
+
+        <v-row class="ml-2 mb-2" style="width: 90%" clas>
+          <v-textarea
+            outlined
+            counter="100"
+            v-model="placeholder"
+            filled
+            color="white"
+            placeholder="write placeholder here . . . ."
+          ></v-textarea>
         </v-row>
       </v-card>
     </v-row>
@@ -40,27 +62,19 @@
             ></v-text-field>
           </v-col>
         </v-card-title>
-        <v-data-table
-          :headers="headers"
-          :items="languages"
-          :search="search"
-        >
-        
+        <v-data-table :headers="headers" :items="languages" :search="search">
           <template v-slot:item="row">
-          <tr>
-            <td>{{row.item.id}}</td>
-            <td>{{row.item.name}}</td>
-            
-            <td>
-                <v-btn color="#EEEEEE"   small >
-                    Edit
-                </v-btn>
-            </td>
-          </tr>
-      </template>
-        
-        </v-data-table> </v-card
-    ></v-row>
+            <tr>
+              <td>{{ row.item.id }}</td>
+              <td>{{ row.item.name }}</td>
+              <td>
+                <v-btn color="#EEEEEE" small> Edit </v-btn>
+              </td>
+            </tr>
+          </template>
+        </v-data-table>
+      </v-card></v-row
+    >
   </v-container>
 </template>
 
@@ -70,6 +84,9 @@ export default {
   data() {
     return {
       search: "",
+      id: "",
+      name: "",
+      placeholder: "",
       headers: [
         {
           text: "ID",
@@ -77,18 +94,18 @@ export default {
           value: "id",
         },
         { text: "Name", value: "name" },
-        {text:"Action", value:"edit"}
+        { text: "Action", value: "edit" },
       ],
       languages: [
         {
-          id: '',
-          name: '',
-          edit:''
-          
+          id: "",
+          name: "",
+          edit: "",
         },
-      ]}
-  },      
-       mounted() {
+      ],
+    };
+  },
+  mounted() {
     this.getLanguages();
   },
 
@@ -97,11 +114,25 @@ export default {
       const response = await this.$axios.get("languages");
 
       const data = response.data;
-        console.log("Hello ");
+
       this.languages = data;
     },
+    async addLanguages() {
+      try {
+        const response = await this.$axios.post("languages", {
+          id: this.id,
+          name: this.name,
+          placeholder: this.placeholder,
+        });
+
+        this.getLanguages();
+        this.id = "";
+        this.name = "";
+        this.placeholder = "";
+      } catch (e) {
+        console.log(e);
+      }
+    },
   },
-  
-  
 };
 </script>

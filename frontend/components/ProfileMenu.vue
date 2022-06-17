@@ -30,10 +30,13 @@
         justify="center"
       >
         <div style="width: 100%" class="mb-2">
-          <v-btn outlined block style="mb-2" color="primary">Profile</v-btn>
+      
+        
+          <v-btn outlined  to="/profile" block style="mb-2" color="primary">Profile</v-btn>
         </div>
         <div style="width: 100%">
           <v-btn outlined block color="primary" @click="logout">Logout</v-btn>
+          
         </div>
       </v-card-actions>
 

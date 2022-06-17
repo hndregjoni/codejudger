@@ -21,6 +21,7 @@
 
           <v-col cols="7">
             <v-text-field
+              v-model="user.name"
               readonly=true
               outlined
               filled
@@ -36,6 +37,7 @@
           >
           <v-col cols="7">
             <v-text-field
+              v-model="user.username"
               readonly=true
               outlined
               filled
@@ -50,7 +52,7 @@
           >
           <v-col cols="7">
             <v-text-field
-             
+              v-model="user.email"
               readonly="true"
               outlined
               filled
@@ -67,7 +69,7 @@
           </v-col>
           <v-col cols="7">
             <v-text-field
-            
+              v-model="user.interest"
               readonly="true"
               
               outlined
@@ -86,3 +88,29 @@
   
 </template>
 
+
+
+<script>
+export default {
+  data() {
+    return {
+      user: [{ username: "", email: "", fullname: "", id: "" ,interests:'', }],
+    };
+  },
+  mounted() {
+    this.getUsers();
+  },
+  methods: {
+    async getUsers() {
+       
+        try {const response = await this.$axios.get("users/id/2");
+
+      const data = response.data;
+      //   console.log(data);
+      this.user = data;}
+      catch(err){console.log(err);}
+      
+    },
+  },
+};
+</script>

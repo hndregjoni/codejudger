@@ -3,7 +3,7 @@
 <template>
   <v-container fluid fill-height>
     <div class="mx-16 px-11">
-      <h1>Manage users (disable/ban)</h1>
+      <h1>Manage users </h1>
     </div>
     <v-row class="my-3" style="height: 100%">
       <v-col cols="1"> </v-col>

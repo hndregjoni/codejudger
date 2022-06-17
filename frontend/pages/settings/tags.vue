@@ -51,7 +51,7 @@
           <template v-slot:item="row">
             <tr>
               <td>{{ row.item.id }}</td>
-              <td>{{ row.item.name }}</td>
+              <td>{{ row.item.title }}</td>
               <td>{{ row.item.slug }}</td>
               <td>{{ row.item.created }}</td>
               <td>
@@ -79,13 +79,13 @@ export default {
           text: "Name",
           align: "start",
 
-          value: "name",
+          value: "title",
         },
         { text: "Slug", value: "slug" },
         { text: "Created", value: "created" },
         { text: "Action", value: "edit" },
       ],
-      tags: [{ id: "", name: "", slug: "", created: "", edit: "" }],
+      tags: [{ id: "", title: "", slug: "", created: "", edit: "" }],
     };
   },
 
