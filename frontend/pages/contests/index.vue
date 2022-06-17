@@ -4,7 +4,7 @@
             <v-col justify="center">
                 <v-card fill-width>
                     <v-card-title>
-                        Problems
+                        Contests
                         <v-spacer></v-spacer>
                         <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line
                             hide-details>
@@ -100,6 +100,7 @@ export default {
                 },
                 { text: 'Name', value: 'name', sortable: false },
                 { text: 'Participants', value: 'participants', sortable: false },
+                { text: 'Status', value: 'status', sortable: false },
                 { text: 'Starts', value: 'stars', sortable: false },
                 { text: 'Ends', value: 'end', sortable: false },
             ],
