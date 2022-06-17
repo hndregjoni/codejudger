@@ -36,7 +36,7 @@ export default {
   plugins: [
     './plugins/injectEnv.ts',
     './plugins/codeMirror.js',
-    './plugins/markdown.js'
+    './plugins/markdown.js',
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components

@@ -33,6 +33,12 @@
           required
         ></v-text-field>
 
+        <v-row v-if="!!error">
+          <v-alert dense outlined type="error">
+            {{error}}
+          </v-alert>
+        </v-row>
+
         <v-row class="mt-5">
           <v-btn
             block
@@ -70,6 +76,8 @@ export default {
     select: null,
     items: ["Item 1", "Item 2", "Item 3", "Item 4"],
     checkbox: false,
+
+    error: undefined
   }),
 
   methods: {
@@ -97,6 +105,7 @@ export default {
         
         this.$router.push('/problems');
       } catch (err) {
+        console.log(err);
         // Show error here!
       }
     }

@@ -6,6 +6,7 @@
     :label="label"
     multiple
     chips
+    :required="required"
 ></v-combobox>
 </template>
 
@@ -17,6 +18,10 @@ export default {
         },
         label: {
             default: "Tags"
+        },
+        required: {
+            default: false,
+            type: Boolean
         }
     },
 

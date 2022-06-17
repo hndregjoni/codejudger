@@ -20,10 +20,10 @@
     <v-row justify="center">
       <v-form ref="form" v-model="valid" lazy-validation>
         <v-text-field
-          v-model="name"
-          :counter="10"
-          :rules="nameRules"
+          v-model="username"
           label="Username"
+          :counter="80"
+          :error-messages="errors"
           required
         ></v-text-field>
 
@@ -45,11 +45,13 @@
         <v-text-field
           v-model="confirmPassword"
           :type="'password'"
-          :rules="[[v => !!v || 'Password is required'], (this.password === this.confirmPassword) || 'Password must match']" 
+          :rules="[
+            [(v) => !!v || 'Password is required'],
+            this.password === this.confirmPassword || 'Password must match',
+          ]"
           label="Confirm password"
           required
         ></v-text-field>
-
 
         <v-row class="mt-5"> </v-row>
         <v-row>
@@ -83,10 +85,10 @@
           class="gender pa-0"
           v-model="gender"
           :items="[
-            { text: 'Male', value: 1 }, 
-            { text: 'Female', value: 2},
-            { text: 'Other', value: 3},
-            { text:'Not specified', value: 4}
+            { text: 'Male', value: 1 },
+            { text: 'Female', value: 2 },
+            { text: 'Other', value: 3 },
+            { text: 'Not specified', value: 4 },
           ]"
           label="Gender"
           required
@@ -94,18 +96,21 @@
 
         <v-label>Bio</v-label>
 
-        <v-textarea counter="90" v-model="bio" solo></v-textarea>
+        <v-textarea counter="90" v-model="bio" solo required></v-textarea>
 
-        <tag-component
-          v-model="interests"
-          :label="Interests"
-        /> 
+        <tag-component v-model="interests" :label="Interests" required />
 
         <v-row class="mt-5">
           <input
             type="text"
             onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+            required
           />
+        </v-row>
+        <v-row v-if="!!error">
+          <v-alert dense outlined type="error">
+            {{error}}
+          </v-alert>
         </v-row>
         <v-row>
           <v-btn
@@ -116,6 +121,7 @@
             outlined
             text
             color="black"
+            type="submit"
           >
             Sign up
           </v-btn>
@@ -131,7 +137,7 @@
           >
             Next
           </v-btn>
-          
+
           <v-btn
             @click="firstPage"
             v-show="value2"
@@ -150,7 +156,7 @@
 </template>
 
 <script>
-import TagComponent from '../components/TagComponent.vue';
+import TagComponent from "../components/TagComponent.vue";
 export default {
   components: { TagComponent },
   auth: false,
@@ -164,6 +170,8 @@ export default {
       bio: "",
       value1: true,
       value2: false,
+
+      error: undefined
     };
   },
   methods: {
@@ -193,18 +201,29 @@ export default {
       this.value2 = false;
     },
 
-    signUp() {
+    async signUp(e) {
+      e.preventDefault();
+
+      if (!this.$refs.form.validate()) return;
+
       const obj = {
         username: this.username,
+        password: this.password,
         email: this.email,
         gender: this.gender,
         full_name: this.full_name,
         interests: this.interests,
-        bio: this.bio
-      }
+        bio: this.bio,
+      };
 
-      console.log(obj);
-    }
+      try {
+        let result = await this.$axios.post("users/", obj);
+
+        this.$router.push("/login")
+      } catch (e) {
+        this.error = "There was an error signing up!";
+      }
+    },
   },
 };
 </script> 
