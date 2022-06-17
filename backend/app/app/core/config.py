@@ -78,7 +78,7 @@ class Settings(BaseSettings):
         )
 
     EMAIL_TEST_USER: EmailStr = "test@example.com"  # type: ignore
-    USERS_OPEN_REGISTRATION: bool = False
+    USERS_OPEN_REGISTRATION: bool = True
 
     class Config:
         case_sensitive = True
@@ -90,7 +90,7 @@ class Settings(BaseSettings):
     FIRST_SUPERUSER_EMAIL: EmailStr
     FIRST_SUPERUSER_PASSWORD: str
 
-    USERNAME_REGEX="[a-zA-Z0-9_]+"
+    USERNAME_REGEX="[a-zA-Z0-9_]{1,80}"
 
     MAX_CASES: int = 100
 

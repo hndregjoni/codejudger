@@ -33,14 +33,15 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
             email=obj_in.email,
             hashed_password=get_password_hash(obj_in.password),
             full_name=obj_in.full_name,
-            is_superuser=obj_in.is_superuser,
             is_active=False
         )
+
+        db_obj.roles = []
 
         tags = crud.tag.get_multi_poly(db, obj_in.interests)
         db_obj.interests.extend(tags)
 
-        self.assign_role(db, user, UserRoles.Solver, commit=False)
+        self.assign_role(db, db_obj, UserRoles.Solver, commit=False)
 
         db.add(db_obj)
         db.commit()
@@ -77,7 +78,6 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
     def assign_role(self, db: Session, user: User, role: UserRoles, commit: bool = True) -> bool:
         """ Assing the roles, and return whether the assignment was effective """ 
         if self.has_role(db, user, role):
-            print("Had role!")
             return False
         
         role = db.query(UserRole).filter(UserRole.id == role.value).first()

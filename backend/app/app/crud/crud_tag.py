@@ -55,7 +55,7 @@ class CRUDTag(CRUDBase[TagSchema, TagCreate, TagUpdate]):
     
     def create_tag(self, db: Session, *, obj_in: TagCreate, author_id: int) -> Tag:
         obj_in_data = jsonable_encoder(obj_in)
-        db_obj = Tag(**obj_in_data, author_id=author_id)  # type: ignore
+        db_obj = Tag(**obj_in_data)  # type: ignore
         db.add(db_obj)
         db.commit()
         db.refresh(db_obj)

@@ -9,6 +9,8 @@ from .role import UserRole, extract_role_name
 from app.core.config import settings
 from .util import _validate_test_cases
 
+from app.models.user import Gender
+
 
 # Shared properties
 
@@ -32,8 +34,12 @@ class UserCreate(UserBaseNoActive):
     def validate_interests(cls, v):
         return _validate_test_cases(cls, v)
 
-    gender: int
+    gender: Gender
+
     bio: str = Field(..., max_length=200)
+
+    class Config:
+        use_enum_values = True
 
 
 # Properties to receive via API on update
