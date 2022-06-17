@@ -33,9 +33,10 @@
                 >mdi-moon-waxing-crescent</v-icon
               >
             </v-btn>
-            
-            <notification-menu :width="250"/>
-            <profile-menu/>
+            <role-guard>
+              <notification-menu :width="250" />
+            </role-guard>
+            <profile-menu />
           </div>
         </v-col>
       </v-row>
@@ -58,9 +59,10 @@
 </style>
 
 <script>
-import NotificationMenu from './NotificationMenu.vue';
+import NotificationMenu from "./NotificationMenu.vue";
+import RoleGuard from "./RoleGuard.vue";
 export default {
-  components: { NotificationMenu },
+  components: { NotificationMenu, RoleGuard },
   methods: {
     toggleMode() {
       this.$vuetify.theme.dark = !this.$vuetify.theme.dark;

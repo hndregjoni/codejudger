@@ -7,20 +7,22 @@
       <v-card height="100%" width="256">
       <v-navigation-drawer permanent>
         <v-list>
-          <v-list-item
-            v-for="item in items"
-            :key="item.title"
-            :to="item.url"
-            nuxt
-          >
-            <v-list-item-icon>
-              <v-icon>{{ item.icon }}</v-icon>
-            </v-list-item-icon>
+          <role-guard  v-for="item in items" :key="item.title" :roles="item.roles">
+            <v-list-item
+            
+              :key="item.title"
+              :to="item.url"
+              nuxt
+            >
+              <v-list-item-icon>
+                <v-icon>{{ item.icon }}</v-icon>
+              </v-list-item-icon>
 
-            <v-list-item-content>
-              {{ item.title }}
-            </v-list-item-content>
-          </v-list-item>
+              <v-list-item-content>
+                {{ item.title }}
+              </v-list-item-content>
+            </v-list-item>
+          </role-guard>
         </v-list>
 
         <template v-slot:append>
@@ -46,7 +48,10 @@
 </template>
 
 <script>
+import RoleGuard from '../components/RoleGuard.vue';
 export default {
+  components: { RoleGuard },
+
   data() {
     return {
       items: [
@@ -54,26 +59,37 @@ export default {
           title: "View metrics ",
           icon: "mdi-view-dashboard",
           url: "/settings/metrics",
+          roles: ["Admin"]
         },
         {
-          title: "Manage users",
+          title: "Manage profile",
           icon: "mdi-account-box",
           url: "/settings/user",
+          roles: ["Admin"],
         },
         {
           title: "Approve requests ",
           icon: "mdi-gavel",
           url: "/settings/requests",
+          roles: ["Admin"]
         },
          {
           title: "Tags ",
           icon: "mdi-bookmark-plus",
           url: "/settings/tags",
+          roles: ["Admin"]
         },
          {
           title: "Manage languages ",
           icon: "mdi-translate",
           url: "/settings/languages",
+          roles: ["Admin"]
+        },
+         {
+          title: "Manage users ",
+          icon: "mdi-shimmer",
+          url: "/settings/users",
+          roles: ["Admin"]
         },
       ],
     };

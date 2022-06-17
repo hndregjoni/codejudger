@@ -42,15 +42,15 @@
         </v-card-title>
         <v-data-table
           :headers="headers"
-          :items="problems"
+          :items="languages"
           :search="search"
         >
         
           <template v-slot:item="row">
           <tr>
+            <td>{{row.item.id}}</td>
             <td>{{row.item.name}}</td>
-            <td>{{row.item.slug}}</td>
-            <td>{{row.item.created}}</td>
+            
             <td>
                 <v-btn color="#EEEEEE"   small >
                     Edit
@@ -72,36 +72,36 @@ export default {
       search: "",
       headers: [
         {
-          text: "Name",
+          text: "ID",
           align: "start",
-          // filterable: false,
-          value: "name",
+          value: "id",
         },
-        { text: "Slug", value: "slug" },
-        { text: "Created", value: "created" },
-        { text: "Action", value: "edit" },
+        { text: "Name", value: "name" },
+        {text:"Action", value:"edit"}
       ],
-      problems: [
+      languages: [
         {
-          name: 'sum of products',
-          slug: 'abcd',
-          created: 'Mon 12 2020',
-          edit: '',
+          id: '',
+          name: '',
+          edit:''
+          
         },
-        {
-         name: 'sum of products',
-          slug: 'abcd',
-          created: 'Mon 12 2020',
-          edit: '',
-        },
-        {
-         name: 'sum of products',
-          slug: 'abcd',
-          created: 'Mon 12 2020',
-          edit: '',
-        },
-      ],
-    };
+      ]}
+  },      
+       mounted() {
+    this.getLanguages();
   },
+
+  methods: {
+    async getLanguages() {
+      const response = await this.$axios.get("languages");
+
+      const data = response.data;
+        console.log("Hello ");
+      this.languages = data;
+    },
+  },
+  
+  
 };
 </script>
