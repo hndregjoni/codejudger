@@ -56,7 +56,8 @@
         </v-card>
       </v-col>
       <v-col cols="auto">
-        <v-card class="pa-2 mb-4">
+        <role-guard :roles="['Setter']"> <v-card class="pa-2 mb-4">
+
           <v-btn
             block
             outlined
@@ -68,7 +69,8 @@
           >
             Create problem
           </v-btn>
-        </v-card>
+        </v-card></role-guard>
+       
         <v-card>
           <v-date-picker v-model="picker"></v-date-picker>
         </v-card>
@@ -84,7 +86,9 @@
 </style>
 
 <script>
+import RoleGuard from '../../components/RoleGuard.vue';
 export default {
+  components: { RoleGuard },
   data() {
     return {
       picker: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
